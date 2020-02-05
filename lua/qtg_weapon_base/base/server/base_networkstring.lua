@@ -1,0 +1,1 @@
+util.AddNetworkString('QSWEP_NetHook')

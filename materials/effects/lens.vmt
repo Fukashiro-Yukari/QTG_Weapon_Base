@@ -1,0 +1,8 @@
+"Refract"
+{
+	"$refractamount"	".5"
+ 	"$normalmap"		"effects/lens"
+	"$forcerefract"		"1"
+	"$bluramount"		"1"
+}
+ 

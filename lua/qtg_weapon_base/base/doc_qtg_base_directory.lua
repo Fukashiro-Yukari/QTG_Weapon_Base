@@ -1,0 +1,1 @@
+-- This is the main directory of QTG Weapon Base. Please do not put any files in this directory, otherwise it will lead to some unnecessary errors.
