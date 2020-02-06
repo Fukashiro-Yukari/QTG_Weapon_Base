@@ -1,4 +1,4 @@
-QSWEP.Version = '1.2412'
+QSWEP.Version = 1.24121
 QSWEP.Changelog = {}
 QSWEP.ChangelogDisplay = false
 
@@ -193,7 +193,11 @@ addlog('2020/2/5',{
 	'Add: DelayFireCancelAnim'
 })
 
-local version = QSWEP.Version
+addlog('2020/2/7',{
+	'Fix: Toggle silencer bug fix',
+})
+
+local version = tostring(QSWEP.Version)
 local versions = tonumber(QSWEP.Version)
 local oldversion = ''
 local changelog
@@ -209,29 +213,31 @@ if f then
 	local v = f:ReadLine()
 	local vn = tonumber(v or '')
 	
-	if vn and vn < versions then
-		QSWEP.ChangelogDisplay = true
-		oldversion = vn
+	if vn then
+		if vn < versions then
+			QSWEP.ChangelogDisplay = true
+			oldversion = vn
+		end
 
 		file.Write('qtg_weapon_base_version.txt',versions)
 	end
 end
 
 hook.Add('HUDPaint','QTG_DisplayChangelog',function()
-	if IsValid(LocalPlayer()) then
-		if !changelog then
-			changelog = QSWEP.GetConvar('changelog')
-		end
-		
-		if QSWEP.ChangelogDisplay and changelog:GetBool() then
-			chat.AddText(Color(0,255,255),'Updated to QTG Weapon Base Version: ',Color(255,0,0),oldversion != '' and oldversion..' ' or '',Color(255,156,0),oldversion != '' and '--> ' or '',Color(0,255,0),version)
-			chat.AddText(Color(0,255,0),(QSWEP.Changelog[#QSWEP.Changelog].id)..':')
+	if !IsValid(LocalPlayer()) then return end
 
-			for k,v in ipairs(QSWEP.Changelog[#QSWEP.Changelog].c) do
-				chat.AddText(Color(255,156,0),'	'..k..'. ',Color(255,255,255),v)
-			end
-		end
-		
-		hook.Remove('HUDPaint','QTG_DisplayChangelog')
+	if !changelog then
+		changelog = QSWEP.GetConvar('changelog')
 	end
+	
+	if QSWEP.ChangelogDisplay and changelog:GetBool() then
+		chat.AddText(Color(0,255,255),'Updated to QTG Weapon Base Version: ',Color(255,0,0),oldversion != '' and oldversion..' ' or '',Color(255,156,0),oldversion != '' and '--> ' or '',Color(0,255,0),version)
+		chat.AddText(Color(0,255,0),(QSWEP.Changelog[#QSWEP.Changelog].id)..':')
+
+		for k,v in ipairs(QSWEP.Changelog[#QSWEP.Changelog].c) do
+			chat.AddText(Color(255,156,0),'	'..k..'. ',Color(255,255,255),v)
+		end
+	end
+	
+	hook.Remove('HUDPaint','QTG_DisplayChangelog')
 end)

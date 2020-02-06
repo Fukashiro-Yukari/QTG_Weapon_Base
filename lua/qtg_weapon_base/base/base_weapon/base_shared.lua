@@ -789,9 +789,7 @@ function SWEP:DoNotDoing(a)
 end
 
 function SWEP:ToggleSilencer()
-	if self.__togglesilencer or !IsFirstTimePredicted() then return end
-
-	self.__togglesilencer = true
+	if (!self:GetState('idle') and !self:GetState('zoom')) or !IsFirstTimePredicted() then return end
 	
 	if self:GetSilencer() then
 		QSWEP.SendAnim(self,self.SilencerDetachAnim)
@@ -799,15 +797,15 @@ function SWEP:ToggleSilencer()
 		QSWEP.SendAnim(self,self.SilencerAttachAnim)
 	end
 	
-	local dur = self:SequenceDuration()
+	local dur = self.__vm:SequenceDuration()
 	self:SetNextFire(dur+0.2)
-	
-	timer.Create('SilencerEquip'..self:EntIndex(),math.max(0,dur-0.1),1,function()
-		if IsValid(self) then
-			self.__togglesilencer = false
-			self:SetSilencer(!self:GetSilencer())
-		end
-	end)
+	self:SetState('togglesilencer')
+	self:SetStateTime(CurTime()+math.max(0,dur-0.1))
+end
+
+function SWEP:FinishSilencer()
+	self:SetState(self:GetIsZoom() and 'zoom' or 'idle')
+	self:SetSilencer(!self:GetSilencer())
 end
 
 function SWEP:ToggleSights(b)
@@ -832,12 +830,12 @@ function SWEP:ToggleSights(b)
 	end
 
 	if dsound and (self:GetState('idle') or self:GetState('zoom')) and self.Owner:KeyPressed(IN_ATTACK2) then
-		self:EmitSound(cis and cis or (mode and 'QSWEP.Ironsighton' or 'QSWEP.Ironsightoff'))
+		self:EmitSound(cis or (mode and 'QSWEP.Ironsighton' or 'QSWEP.Ironsightoff'))
 	end
 
 	self:SetIsZoom(!self:GetIsZoom())
 
-	if !self:GetState('run') and !self:GetState('reload') and !self:GetState('reloadcustom') and !self:GetHolstering() then
+	if !self:GetState('run') and !self:GetState('reload') and !self:GetState('reloadcustom') and !self:GetState('togglesilencer') and !self:GetHolstering() then
 		self:SetState(mode and 'zoom' or 'idle')
 	end
 end
@@ -1035,8 +1033,6 @@ function SWEP:Reload2()
 end
 
 function SWEP:FinishReload()
-	if self:GetStateTime() > CurTime() then return end
-
 	self:SetState(self:GetIsZoom() and 'zoom' or 'idle')
 
 	if self.Akimbo then
@@ -1304,8 +1300,12 @@ function SWEP:Think()
 				self:SetStartReload(0)
 			end
 		end
-	elseif (self:GetState('reload') or self:GetState('reloadcustom')) and !self.Shotgun then
+	elseif (self:GetState('reload') or self:GetState('reloadcustom')) and !self.Shotgun and self:GetStateTime() < CurTime() then
 		self:FinishReload()
+	end
+
+	if self:GetState('togglesilencer') and self:GetStateTime() < CurTime() then
+		self:FinishSilencer()
 	end
 
 	if self:GetRoundBurst() and IsFirstTimePredicted() then
@@ -1496,13 +1496,6 @@ function SWEP:FinishHolster()
 	
 	if self.Owner:IsNPC() then return end
 	if v2 != nil then return v2 end
-
-	if timer.Exists('SilencerEquip'..self:EntIndex()) then
-		timer.Remove('SilencerEquip'..self:EntIndex())
-		
-		self.__togglesilencer = false
-	end
-	
 	if !self.Owner:Alive() or !self.CanHolster then return end
 
 	if SERVER then

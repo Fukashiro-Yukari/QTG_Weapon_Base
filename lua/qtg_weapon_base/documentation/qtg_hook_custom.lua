@@ -12,7 +12,7 @@ ent = player or npc (I think it is impossible for other entities)
 
 QTG_OnSetState(wep,state) -- Called when the state is set, returns true to prevent, returns a string and number to override the state and state time
 
--- deploy+init
+-- deploy + init
 
 QTG_SetupDataTables(wep) -- Insert content in SetupDataTables
 QTG_PreInitialize(wep) -- Add content before initialization
