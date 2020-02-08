@@ -1,4 +1,4 @@
-QSWEP.Version = 1.24121
+QSWEP.Version = 1.241211
 QSWEP.Changelog = {}
 QSWEP.ChangelogDisplay = false
 
@@ -195,6 +195,10 @@ addlog('2020/2/5',{
 
 addlog('2020/2/7',{
 	'Fix: Toggle silencer bug fix',
+})
+
+addlog('2020/2/8',{
+	'Fix: Network function bug fix',
 })
 
 local version = tostring(QSWEP.Version)

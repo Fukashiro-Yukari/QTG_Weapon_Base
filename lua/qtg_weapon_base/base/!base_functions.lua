@@ -29,6 +29,8 @@ function QSWEP.StartNet(a,...)
 
 			table.remove(args,n)
 		end
+	elseif CLIENT then
+		table.insert(args,1,LocalPlayer())
 	end
 
     net.WriteTable(args)

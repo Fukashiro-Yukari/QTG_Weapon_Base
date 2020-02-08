@@ -841,6 +841,7 @@ function SWEP:ToggleSights(b)
 end
 
 function SWEP:ToggleFireMode()
+	if CLIENT then return end
 	if !self.FireModeShow then return end
 	if self:GetToggleFireModeTime() > CurTime() then return end
 
