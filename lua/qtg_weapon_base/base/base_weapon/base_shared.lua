@@ -841,7 +841,6 @@ function SWEP:ToggleSights(b)
 end
 
 function SWEP:ToggleFireMode()
-	if CLIENT then return end
 	if !self.FireModeShow then return end
 	if self:GetToggleFireModeTime() > CurTime() then return end
 
@@ -851,18 +850,22 @@ function SWEP:ToggleFireMode()
 		t.holster(self)
 	end
 
-	if self:GetFireMode() < #self:GetFireModeTbl() then
-		self:SetFireMode(self:GetFireMode()+1)
-	else
-		self:SetFireMode(1)
+	if SERVER then
+		if self:GetFireMode() < #self:GetFireModeTbl() then
+			self:SetFireMode(self:GetFireMode()+1)
+		else
+			self:SetFireMode(1)
+		end
 	end
 
 	local t = self:GetFireModeTbl()[self:GetFireMode()]
 
 	if !t then return end
 
-	if #self:GetFireModeTbl() > 1 then
-		self.Owner:EmitSound(self.FireModeToggleSound)
+	if CLIENT or game.SinglePlayer() then
+		if #self:GetFireModeTbl() > 1 then
+			self.Owner:EmitSound(self.FireModeToggleSound)
+		end
 	end
 
 	if t.toggle then
