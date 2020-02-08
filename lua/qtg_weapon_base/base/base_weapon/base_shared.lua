@@ -789,7 +789,7 @@ function SWEP:DoNotDoing(a)
 end
 
 function SWEP:ToggleSilencer()
-	if (!self:GetState('idle') and !self:GetState('zoom')) or !IsFirstTimePredicted() then return end
+	if (!self:GetState('idle') and !self:GetState('zoom') and !self:GetState('run')) or !IsFirstTimePredicted() then return end
 	
 	if self:GetSilencer() then
 		QSWEP.SendAnim(self,self.SilencerDetachAnim)
