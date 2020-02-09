@@ -14,7 +14,7 @@ function EFFECT:Init(d)
 		if e.Owner == p and !p:GetViewModel() != LocalPlayer() and !p:ShouldDrawLocalPlayer() then
 			if e.GetViewModel then
 				e = e:GetViewModel()
-			else
+			elseif IsValid(e.Owner) then
 				e = e.Owner:GetViewModel()
 			end
 		end
