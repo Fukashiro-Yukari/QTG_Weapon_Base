@@ -580,7 +580,7 @@ function SWEP:SetNoAmmo()
 end
 
 function SWEP:PrimaryAttack()
-	if self.Owner:KeyDown(IN_USE) and self.Silencer and self.SilencerToggle then
+	if self.Owner:IsPlayer() and self.Owner:KeyDown(IN_USE) and self.Silencer and self.SilencerToggle then
 		self:ToggleSilencer()
 
 		return
@@ -752,7 +752,7 @@ function SWEP:StartAttack(a)
 end
 
 function SWEP:PostShoot()
-	if !IsValid(self.Owner) or self.Owner:IsNPC() then return end
+	if !IsValid(self.Owner) then return end
 
 	if self.IsPump and self:Clip1() > 1 then
 		QSWEP.SimpleTimer(self.PumpDelay or 0.5,self,self.Owner,function()

@@ -5,11 +5,11 @@ SWEP.NPCCanPicked				= true
 SWEP.NPCRestTimesMax			= 0.6
 SWEP.NPCRestTimesMin			= 0.3
 
-SWEP.NPCBulletSpreadPoor		= 1
-SWEP.NPCBulletSpreadAverage		= 1
-SWEP.NPCBulletSpreadGood		= 1
-SWEP.NPCBulletSpreadVeryGood	= 1
-SWEP.NPCBulletSpreadPerect		= 1
+SWEP.NPCBulletSpreadPoor		= 30
+SWEP.NPCBulletSpreadAverage		= 25
+SWEP.NPCBulletSpreadGood		= 20
+SWEP.NPCBulletSpreadVeryGood	= 15
+SWEP.NPCBulletSpreadPerect		= 10
 
 function SWEP:SetNpc()
 	if self.Owner:GetClass() == 'npc_combine_s' then
