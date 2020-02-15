@@ -16,6 +16,7 @@ SWEP.DeployViewBob				= false
 
 SWEP.Primary.ThrowAnim          = ACT_VM_THROW
 SWEP.Primary.ClipSize		    = -1
+SWEP.Primary.DefaultClip        = 1
 SWEP.Primary.Automatic 		    = true
 SWEP.Primary.Delay 			    = 1.5
 SWEP.Primary.EntAmmo		    = ''
@@ -41,6 +42,7 @@ SWEP.ThrowDelay					= 0
 SWEP.ThrowTime                  = 0.4
 
 SWEP.FireModeShow				= false
+SWEP.NoRemove					= false
 
 function SWEP:AltSetupDataTables()
 	self:AddNWVar('Bool','Type')
@@ -116,6 +118,8 @@ function SWEP:StartAttack(a)
 	self:SetHoldType(self.HoldReady)
 end
 
+local removetime = 0
+
 function SWEP:Think()
 	if self:GetState('pin') then
 		if !self.Owner:KeyDown(IN_ATTACK) and !self.Owner:KeyDown(IN_ATTACK2) and self:GetStateTime() < CurTime() then
@@ -124,20 +128,24 @@ function SWEP:Think()
 			QSWEP.SendAnim(self,self:GetType() and self.Primary.ThrowAnim or self.Secondary.ThrowAnim)
 			self.Owner:SetAnimation(PLAYER_ATTACK1)
 			self:SetState('idle')
-			
-			timer.Simple(self.ThrowDelay,function()
-				if !IsValid(self) or !IsFirstTimePredicted() then return end
 
+			QSWEP.SimpleTimer(self.ThrowDelay,self,function()
 				self:EntAmmoFire(self:GetType() and self.Primary or self.Secondary)
 			end)
 
-			timer.Simple(self.ThrowTime,function()
-				if !IsValid(self) or !IsFirstTimePredicted() then return end
-
+			QSWEP.SimpleTimer(self.ThrowTime,self,function()
 				hook.Run('QTG_OnThrow',self)
 				QSWEP.SendAnim(self,self.DeployAnim)
 					
 				self:SetHoldType(self.HoldType)
+
+				QSWEP.SimpleTimer(0.2,self,self.Owner,function()
+					local t = self:GetType() and self.Primary or self.Secondary
+	
+					if self:Ammo1() > 0 or t.NoAmmo or self.NoRemove then return end
+	
+					self.Owner:StripWeapon(self.ClassName)
+				end)
 			end)
         end
         

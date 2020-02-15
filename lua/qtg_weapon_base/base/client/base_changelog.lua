@@ -1,4 +1,4 @@
-QSWEP.Version = 1.241211
+QSWEP.Version = 1.241212
 QSWEP.Changelog = {}
 QSWEP.ChangelogDisplay = false
 
@@ -199,6 +199,12 @@ addlog('2020/2/7',{
 
 addlog('2020/2/8',{
 	'Fix: Network function bug fix',
+})
+
+addlog('2020/2/15',{
+	'Fix: Shotgun reload fix',
+	'Fix: Single player games will also call the client Think function',
+	'Add: Grenade weapon will be automatically deleted if there is no remaining ammunition'
 })
 
 local version = tostring(QSWEP.Version)

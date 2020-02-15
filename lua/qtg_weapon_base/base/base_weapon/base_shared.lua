@@ -841,6 +841,10 @@ function SWEP:ToggleSights(b)
 end
 
 function SWEP:ToggleFireMode()
+	if game.SinglePlayer() and SERVER then
+		self:QTG_CallFunc('ToggleFireMode')
+	end
+
 	if !self.FireModeShow then return end
 	if self:GetToggleFireModeTime() > CurTime() then return end
 
@@ -1101,17 +1105,21 @@ function SWEP:ReloadShotgun(ct)
 	if !IsValid(self) or !IsValid(self.Owner:GetActiveWeapon()) then return end
 	
 	if self:GetState('reload') or self:GetState('reloadcustom') then
-		if self:Ammo1() == 0 or self:Clip1() >= self.Primary.ClipSize or self.Owner:KeyPressed(IN_ATTACK) or self.Owner:KeyPressed(IN_ATTACK2) or self.Owner:QTG_ALTKeyDown() then
-			self:SetNextFire(self.ShotgunReloadTime+0.2)
+		if self:Ammo1() < 1 or self:Clip1() >= self.Primary.ClipSize or self.Owner:KeyPressed(IN_ATTACK) or self.Owner:KeyPressed(IN_ATTACK2) or self.Owner:QTG_ALTKeyDown() then
+			self:SetNextFire(self.__vm:SequenceDuration())
 
-			QSWEP.SimpleTimer(self.__vm:SequenceDuration(),self,function()
-				QSWEP.SendAnim(self,ACT_SHOTGUN_RELOAD_FINISH)
-					
+			if self.__fixshotgunreload then return end
+
+			self.__fixshotgunreload = true
+
+			QSWEP.SimpleTimer(self.__vm:SequenceDuration()/1.2,self,function()
 				if self:GetState('reload') or self:GetState('reloadcustom') then
 					self:SetState(self:GetIsZoom() and 'zoom' or 'idle')
-					self:EmitSound(self.ShotgunEndReloadSound)
+					self.__fixshotgunreload = false
 				end
 
+				QSWEP.SendAnim(self,ACT_SHOTGUN_RELOAD_FINISH)
+				self:EmitSound(self.ShotgunEndReloadSound)
 				self:RunningStart()
 			end)
 		elseif SERVER or !game.SinglePlayer() then
@@ -1176,6 +1184,10 @@ function SWEP:GetViewModel()
 end
 
 function SWEP:Think()
+	if game.SinglePlayer() and SERVER then
+		self:QTG_CallFunc('Think')
+	end
+
 	if !IsValid(self.Owner) then return end
 	if self.Owner:IsNPC() then return end
 	
@@ -1204,14 +1216,10 @@ function SWEP:Think()
 	else
 		self:SetSAttacking(false)
 	end
-	
-	if game.SinglePlayer() and SERVER and IsValid(self:GetOwner()) and !self:GetOwner():IsNPC() then
-		QSWEP.StartNet('isdrawply','Send',self:GetOwner())
+
+	if game.SinglePlayer() and CLIENT then
+		QSWEP.StartNet('isdrawply',LocalPlayer():ShouldDrawLocalPlayer())
 	end
-	
-	-- if self.CanRun and running:GetBool() and self:GetStateTime() < ct and (self:GetState('deploy') or self:GetState('deploycustom') and self:GetState('deploy') then
-	-- 	self:RunningStart()
-	-- end
 
 	if !running:GetBool() and self:GetState('run') then
 		self:SetState('idle')
@@ -1493,6 +1501,8 @@ function SWEP:FinishHolster()
 		
 		return
 	end
+
+	self.__fixshotgunreload = false
 
 	if !IsValid(self:GetOwner()) then return end
 	
@@ -2070,6 +2080,9 @@ end
 function SWEP:PlayEffects(a)
 	if !IsFirstTimePredicted() then return end
 	if SERVER and !game.SinglePlayer() then return end
+
+	print(self:IsDrawPly())
+
 	a = a or 1
 
 	local drawply = self:IsDrawPly()

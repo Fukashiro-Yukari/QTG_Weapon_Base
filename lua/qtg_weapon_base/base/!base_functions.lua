@@ -491,24 +491,24 @@ function QSWEP.GetQTGWep(s,b)
 	end
 end
 
-function QSWEP.AddKillIcon(a,b,c,d,e)
+function QSWEP.AddKillIcon(a,...)
 	local t = {
-		function(a,b,c,d,e)
-			killicon.AddAlias(b,c)
+		function(...)
+			killicon.AddAlias(...)
 		end,
-		function(a,b,c,d,e)
-			killicon.AddFont(b,c,d,e)
+		function(...)
+			killicon.AddFont(...)
 		end
 	}
 
-	local def = function(a,b,c,d,e)
-		killicon.Add(b,c,d)
+	local def = function(...)
+		killicon.Add(...)
 	end
 
 	if t[a] then
-		t[a](a,b,c,d,e)
+		t[a](...)
 	else
-		def(a,b,c,d,e)
+		def(...)
 	end
 end
 

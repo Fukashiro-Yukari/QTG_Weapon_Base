@@ -7,7 +7,7 @@ function w:IsQSWEP()
 	return tobool(self.IsQTGWeapon)
 end
 
-function p:QTG_ALTKeyDown(a)
+function p:QTG_ALTKeyDown()
 	if !IsValid(self) then return end
 
 	return self:GetNW2Bool('QTG_ALTKeyDown')

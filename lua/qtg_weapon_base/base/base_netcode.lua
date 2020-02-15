@@ -20,12 +20,6 @@ else
 		
 		QSWEP.ResetBonePositions(vm)
 	end)
-
-	QSWEP.ReadNet('isdrawply',function(p)
-		if !IsValid(p) then return end
-
-		QSWEP.StartNet('isdrawply',LocalPlayer():ShouldDrawLocalPlayer())
-	end)
 end
 
 QSWEP.ReadNet('callfunc',function(p,w,n,...)
