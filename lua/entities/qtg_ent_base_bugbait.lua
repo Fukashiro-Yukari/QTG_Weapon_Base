@@ -11,6 +11,8 @@ ENT.Model			= 'models/weapons/w_bugbait.mdl'
 ENT.CollideDecal	= ''
 ENT.CollideSound	= ''
 
+ENT.RemoveTime		= 0
+
 function ENT:SetupDataTables()
 	self:AltSetupDataTables()
 end
@@ -50,7 +52,10 @@ function ENT:PhysicsCollide(d,p)
 	end
 
 	self:DoCollide(d,p)
-	self:SafeRemove()
+
+	if self.RemoveTime > -1 then
+		QSWEP.Remove(self,self.RemoveTime)
+	end
 end
 
 function ENT:DoCollide(d,p) end

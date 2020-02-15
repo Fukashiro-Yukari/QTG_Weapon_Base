@@ -841,10 +841,6 @@ function SWEP:ToggleSights(b)
 end
 
 function SWEP:ToggleFireMode()
-	if game.SinglePlayer() and SERVER then
-		self:QTG_CallFunc('ToggleFireMode')
-	end
-
 	if !self.FireModeShow then return end
 	if self:GetToggleFireModeTime() > CurTime() then return end
 
@@ -854,12 +850,10 @@ function SWEP:ToggleFireMode()
 		t.holster(self)
 	end
 
-	if SERVER then
-		if self:GetFireMode() < #self:GetFireModeTbl() then
-			self:SetFireMode(self:GetFireMode()+1)
-		else
-			self:SetFireMode(1)
-		end
+	if self:GetFireMode() < #self:GetFireModeTbl() then
+		self:SetFireMode(self:GetFireMode()+1)
+	else
+		self:SetFireMode(1)
 	end
 
 	local t = self:GetFireModeTbl()[self:GetFireMode()]
@@ -1112,7 +1106,7 @@ function SWEP:ReloadShotgun(ct)
 
 			self.__fixshotgunreload = true
 
-			QSWEP.SimpleTimer(self.__vm:SequenceDuration()/1.2,self,function()
+			QSWEP.SimpleTimer(self.__vm:SequenceDuration()/1.4,self,function()
 				if self:GetState('reload') or self:GetState('reloadcustom') then
 					self:SetState(self:GetIsZoom() and 'zoom' or 'idle')
 					self.__fixshotgunreload = false
@@ -1312,7 +1306,7 @@ function SWEP:Think()
 				self:SetStartReload(0)
 			end
 		end
-	elseif (self:GetState('reload') or self:GetState('reloadcustom')) and !self.Shotgun and self:GetStateTime() < CurTime() then
+	elseif (self:GetState('reload') or self:GetState('reloadcustom')) and self:GetStateTime() < CurTime() then
 		self:FinishReload()
 	end
 
@@ -1951,7 +1945,7 @@ function SWEP:CanPrimaryAttack(a)
 	return true,true
 end
 
-function SWEP:CanSecondaryAttack(a)
+function SWEP:CanSecondaryAttack(a,b)
 	local sound = a and '' or self.EmptySound
 
 	if IsValid(self.Owner) and self.Owner:WaterLevel() >= 3 and !self.FireUnderWater then
@@ -2080,8 +2074,6 @@ end
 function SWEP:PlayEffects(a)
 	if !IsFirstTimePredicted() then return end
 	if SERVER and !game.SinglePlayer() then return end
-
-	print(self:IsDrawPly())
 
 	a = a or 1
 

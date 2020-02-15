@@ -414,7 +414,7 @@ function QSWEP.AddSoundStr(s)
 end
 
 function QSWEP.SendAnim(self,a,f)
-	if !IsValid(self) then return end
+	if !QSWEP.Assert(IsValid(self),'Non-existent entities!',true) then return end
 	if !IsValid(self.Owner) then return end
 	if self.Owner:IsNPC() then return end
 	if !a then return end
@@ -690,7 +690,7 @@ end
 function QSWEP.SafeRemove(e,n)
 	if !IsValid(e) or e:IsPlayer() then return end
 
-	e:SafeRemove()
+	e:SafeRemove(n)
 end
 
 QSWEP.Remove = QSWEP.SafeRemove
