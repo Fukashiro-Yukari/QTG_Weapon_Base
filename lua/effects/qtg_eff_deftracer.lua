@@ -21,7 +21,11 @@ function EFFECT:Init(d)
 
 		local a = e:GetAttachment(a)
 		if a then
-			self.StartPos = a.Pos+Vector(0,0,2.5)
+			if !game.SinglePlayer() then
+				self.StartPos = a.Pos+Vector(0,0,2.5)
+			else
+				self.StartPos = a.Pos
+			end
 
 			if IsValid(self.Ent) and isfunction(self.Ent.GetSilencer) and self.Ent:GetSilencer() then
 				self.StartPos = self.StartPos+a.Ang:Forward()*4
