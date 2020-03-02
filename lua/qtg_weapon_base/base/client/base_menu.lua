@@ -5,13 +5,16 @@ local function ServerOption(p)
 	p:CheckBox('Enable Hold Ironsights','sv_qswep_holdironsights')
 	p:CheckBox('Enable Changelog','sv_qswep_changelog')
 	p:CheckBox('Enable Running','sv_qswep_running')
-	p:CheckBox('Enable Bullet Ricochet','sv_qswep_ricochet')
-	p:CheckBox('Enable Bullet Renetration','sv_qswep_penetration')
-	p:CheckBox('Enable Bullet Air Diffusion','sv_qswep_spreadinair')
 	p:CheckBox('Enable Reload','sv_qswep_reload')
 	p:CheckBox('Use (+attack3) for alt fire','sv_qswep_altatt_key')
 	p:CheckBox('Flashbang affect npc','sv_qswep_flashbang_affect_npc')
 	p:CheckBox('Smokegrenade affect npc','sv_qswep_smokegrenade_affect_npc')
+end
+
+local function BulletOption(p)
+	p:CheckBox('Enable Bullet Ricochet','sv_qswep_ricochet')
+	p:CheckBox('Enable Bullet Renetration','sv_qswep_penetration')
+	p:CheckBox('Enable Bullet Air Diffusion','sv_qswep_spreadinair')
 end
 
 local function HudOption(p)
@@ -81,11 +84,19 @@ local function Version(p)
 	p:Help('Version: '..QSWEP.Version)
 end
 
+local id = 0
+local function addoption(n,f)
+	id = id+1
+
+	spawnmenu.AddToolMenuOption('Options','QTG Weapon Base','QTG_Base_Settings_'..id,n,'','',f)
+end
+
 function QSWEP.AddOption()
-	spawnmenu.AddToolMenuOption('Options','QTG Weapon Base','QTG_Base_Settings_HUD','Admin / Server','','',ServerOption)
-	spawnmenu.AddToolMenuOption('Options','QTG Weapon Base','QTG_Base_Settings_HUD2','HUD / Crosshair','','',HudOption)
-	spawnmenu.AddToolMenuOption('Options','QTG Weapon Base','QTG_Base_Settings_HUD3','Viewmodel','','',VMOption)
-	spawnmenu.AddToolMenuOption('Options','QTG Weapon Base','QTG_Base_Settings_HUD4','Version','','',Version)
+	addoption('Admin / Server',ServerOption)
+	addoption('Bullet',BulletOption)
+	addoption('HUD / Crosshair',HudOption)
+	addoption('Viewmodel',VMOption)
+	addoption('Version',Version)
 end
 
 hook.Add('PopulateToolMenu','QTG_Base_Settings',QSWEP.AddOption)

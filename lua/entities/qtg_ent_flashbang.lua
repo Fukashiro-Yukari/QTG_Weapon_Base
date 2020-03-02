@@ -100,7 +100,7 @@ end
 hook.Add('RenderScreenspaceEffects','qtg_ent_flashbang',function()
     if QSWEP_FlashEndTime then
 		if QSWEP_FlashEndTime > CurTime() then
-			local alpha = (QSWEP_FlashEndTime - CurTime()) / 4
+			local alpha = (QSWEP_FlashEndTime - CurTime())/4
 			
 			DrawMotionBlur(0.2, alpha, 0.05)
 		elseif QSWEP_FlashEndTime + 0.3 > CurTime() then
@@ -111,7 +111,7 @@ end)
 
 hook.Add('HUDPaint','qtg_ent_flashbang',function()
 	if QSWEP_FlashEndTime and QSWEP_FlashEndTime > CurTime() then
-		local alpha = 255 * (QSWEP_FlashEndTime - CurTime()) / 6
+		local alpha = 255 * (QSWEP_FlashEndTime - CurTime())/6
 		
 		surface.SetDrawColor(255,255,255,alpha)
 		surface.DrawRect(0,0,ScrW(),ScrH())
