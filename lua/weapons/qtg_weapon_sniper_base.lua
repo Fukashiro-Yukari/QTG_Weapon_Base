@@ -71,11 +71,15 @@ function SWEP:Think()
         self.Owner:DrawViewModel(self:GetSniperPumping() > CurTime() or !self:GetState('zoom') or self:GetState('run') or self:GetState('reload') or self:GetState('holster'))
     end
 
-    if !self.Owner:QTG_ALTKeyDown() and self:GetNextSights() < CurTime() then
+    if !self.Owner:QTG_ALTKeyDown() and self:GetNextSights() < CurTime() and self:GetFireModeName() != 'Safety' then
 		if self.Owner:KeyPressed(IN_ATTACK2) then
 			self:SetZoom()
 			self:SetNextSights(CurTime()+0.1)
 		end
+    end
+
+    if self:GetFireModeName() == 'Safety' and self:GetState('zoom') then
+        self:SetState('idle')
     end
 
     if self.Secondary.ScopeDelay then

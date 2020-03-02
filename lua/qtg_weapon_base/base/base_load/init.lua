@@ -8,10 +8,10 @@ t.Author = 'Neptune QTG'
 t.IsGM = false
 t.Path = {
 	{'qtg_weapon_base/base','sh'},
-	{'qtg_weapon_base','sh'},
 	{'qtg_weapon_base/base/client','cl'},
-	{'qtg_weapon_base/client','cl'},
 	{'qtg_weapon_base/base/server','sv'},
+	{'qtg_weapon_base','sh'},
+	{'qtg_weapon_base/client','cl'},
 	{'qtg_weapon_base/server','sv'}
 }
 

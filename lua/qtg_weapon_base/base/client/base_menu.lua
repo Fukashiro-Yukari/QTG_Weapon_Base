@@ -10,6 +10,8 @@ local function ServerOption(p)
 	p:CheckBox('Enable Bullet Air Diffusion','sv_qswep_spreadinair')
 	p:CheckBox('Enable Reload','sv_qswep_reload')
 	p:CheckBox('Use (+attack3) for alt fire','sv_qswep_altatt_key')
+	p:CheckBox('Flashbang affect npc','sv_qswep_flashbang_affect_npc')
+	p:CheckBox('Smokegrenade affect npc','sv_qswep_smokegrenade_affect_npc')
 end
 
 local function HudOption(p)
@@ -68,7 +70,10 @@ end
 local function VMOption(p)
 	p:NumSlider('Gun Bob Intensity','cl_qswep_vm_bob',0,2)
 	p:NumSlider('Gun Idle Intensity','cl_qswep_vm_idle',0,2)
+	p:NumSlider('Gun Sway Intensity','cl_qswep_vm_sway',0,10)
 	p:NumSlider('Gun Tilt strength','cl_qswep_view_tilt',0,2)
+
+	p:CheckBox('Change angle after crouching','cl_qswep_vm_crouch')
 end
 
 local function Version(p)
@@ -76,7 +81,7 @@ local function Version(p)
 	p:Help('Version: '..QSWEP.Version)
 end
 
-function QSWEP:AddOption()
+function QSWEP.AddOption()
 	spawnmenu.AddToolMenuOption('Options','QTG Weapon Base','QTG_Base_Settings_HUD','Admin / Server','','',ServerOption)
 	spawnmenu.AddToolMenuOption('Options','QTG Weapon Base','QTG_Base_Settings_HUD2','HUD / Crosshair','','',HudOption)
 	spawnmenu.AddToolMenuOption('Options','QTG Weapon Base','QTG_Base_Settings_HUD3','Viewmodel','','',VMOption)

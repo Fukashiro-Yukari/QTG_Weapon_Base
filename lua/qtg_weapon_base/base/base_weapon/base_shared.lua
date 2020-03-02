@@ -174,10 +174,12 @@ SWEP.SilencerToggle					= true
 
 SWEP.FireMode						= {}
 SWEP.FireModeShow					= true
+SWEP.FireModeStart					= 1
 SWEP.FireModeSemiAuto				= true
 SWEP.FireModeFullAuto				= true
 SWEP.FireModeRoundBurst				= false
 SWEP.FireModeRoundBurstNum			= 3
+SWEP.FireModeSafety					= true
 SWEP.FireModeToggleSound			= 'Weapon_Alyx_Gun.Special2'
 
 SWEP.LuaAnimAtt						= false
@@ -333,11 +335,13 @@ local basefiremode = {
 			return self.FireModeRoundBurst
 		end,
 		toggle = function(self) end,
-		wepdata = {
-			PrimaryAttack = function(self)
-				patt(self,true)
-			end
-		}
+	},
+	{
+		name = 'Safety',
+		show = function(self)
+			return self.FireModeSafety
+		end,
+		toggle = function(self) end,
 	}
 }
 
@@ -437,6 +441,10 @@ function SWEP:GetHolstering()
 	return self:GetState('holster') or self:GetState('holstercustom') or self:GetState('holsterfinish')
 end
 
+function SWEP:GetFireModeName()
+	return ((self.__firemode or {})[self:GetFireMode()] or {}).name or 'nil'
+end	
+
 function SWEP:AltSetupDataTables() end
 
 function SWEP:InitFireMode()
@@ -457,7 +465,7 @@ function SWEP:InitFireMode()
 		end
 	end
 
-	self:SetFireMode(1)
+	self:SetFireMode(self.FireModeStart)
 end
 
 function SWEP:GetFireModeTbl()
@@ -586,7 +594,9 @@ function SWEP:PrimaryAttack()
 		return
 	end
 
-	patt(self)
+	if self:GetFireModeName() == 'Safety' then return end
+
+	patt(self,self:GetFireModeName() == 'Round Burst')
 end
 
 function SWEP:AltPrePrimaryAttack() end
@@ -609,7 +619,7 @@ function SWEP:SecondaryAttack(a)
 		return
 	end
 	
-	if self:GetPAttacking() or self:GetState('reload') or self:GetState('reloadcustom') or self:GetState('run') then return end
+	if self:GetPAttacking() or self:GetState('reload') or self:GetState('reloadcustom') or self:GetState('run') or self:GetFireModeName() == 'Safety' then return end
 	if self:CanSecondaryAttack() then
 		local alta = self:AltPreSecondaryAttack()
 		if alta then
@@ -777,9 +787,6 @@ function SWEP:PostShoot()
 				self:SetSniperPumping(CurTime()+(self.__vm:SequenceDuration()-0.1))
 			end
 		end)
-	else
-		-- self:SetPumping(true)
-		-- self:SetPumptime(CurTime()+1)
 	end
 end
 
@@ -829,14 +836,14 @@ function SWEP:ToggleSights(b)
 		end
 	end
 
-	if dsound and (self:GetState('idle') or self:GetState('zoom')) and self.Owner:KeyPressed(IN_ATTACK2) then
+	if dsound and (self:GetState('idle') or self:GetState('zoom')) and self.Owner:KeyPressed(IN_ATTACK2) and self:GetFireModeName() != 'Safety' then
 		self:EmitSound(cis or (mode and 'QSWEP.Ironsighton' or 'QSWEP.Ironsightoff'))
 	end
 
 	self:SetIsZoom(!self:GetIsZoom())
 
 	if !self:GetState('run') and !self:GetState('reload') and !self:GetState('reloadcustom') and !self:GetState('togglesilencer') and !self:GetHolstering() then
-		self:SetState(mode and 'zoom' or 'idle')
+		self:SetState((mode and self:GetFireModeName() != 'Safety') and 'zoom' or 'idle')
 	end
 end
 
@@ -1241,6 +1248,10 @@ function SWEP:Think()
 			self:SetNextSights(ct+0.1)
 		end
 	end
+
+	if self:GetFireModeName() == 'Safety' then
+		self:ToggleSights(false)
+	end
 	
 	if IsValid(self.__vm) and SERVER then
 		if self:GetNextIdle() < ct and self.CanIdle and (self:GetState('idle') or self:GetState('zoom')) and self.__vm:SequenceDuration() < ct then
@@ -1399,7 +1410,7 @@ end
 function SWEP:ThinkRunning(ct)
 	if !IsValid(self) or !IsValid(self.Owner) then return end
 	if !self:GetHolstering() then
-		if self:GetState('run') and self:GetNextPrimaryFire() < CurTime() and self:GetNextSecondaryFire() < CurTime() then
+		if (self:GetState('run') and self:GetNextPrimaryFire() < CurTime() and self:GetNextSecondaryFire() < CurTime()) or self:GetFireModeName() == 'Safety' then
 			if self.PassiveAnim then
 				self:SetHoldType(self.PassiveAnim)
 			else
@@ -1528,6 +1539,7 @@ function SWEP:Deploy()
 	self:SetWeapon()
 
 	self.Inspecting = false
+	self.c_oang = nil
 
 	timer.Simple(0,function()
 		if !IsValid(self) then return end

@@ -150,6 +150,36 @@ addhook('PlayerDroppedWeapon',function(p,w)
 	end
 end)
 
+if CLIENT then
+	QSWEP.ReadNet('fixplayerspawn',function(p)
+		local vm = p:GetViewModel()
+
+		for k,v in pairs(vm:GetMaterials()) do
+			vm:SetSubMaterial(k-1,'')
+		end
+	end)
+end
+
+addhook('PlayerSpawn',function(p)
+	QSWEP.SimpleTimer(0,p,function()
+		QSWEP.StartNet('fixplayerspawn','Send',p)
+	end)
+end)
+
+addhook('PlayerSwitchWeapon',function(p,ow,nw)
+	if SERVER then return end
+
+	timer.Simple(0,function()
+		if !IsValid(p) then return end
+
+		local vm = p:GetViewModel()
+
+		for k,v in pairs(vm:GetMaterials()) do
+			vm:SetSubMaterial(k-1,'')
+		end
+	end)
+end)
+
 local hookoff = false
 local nodmgt = {
 	['npc_combinegunship'] = 50,
@@ -440,7 +470,7 @@ if CLIENT then
 		local ammocount,ammocount2 = w.Owner:GetAmmoCount(ammotype),w.Owner:GetAmmoCount(ammotype2)
 		local clip1text = 'MAG: '..(clip1 > pclip and pclip..' + '..clip1-pclip or clip1)
 		local clip2text = 'ALT-MAG: '..(clip2 > sclip and sclip..' + '..clip2-sclip or clip2)
-		local ammotext,ammo2text = 'RESERVE: '..ammocount,'ALT-Ammo: '..ammocount2
+		local ammotext,ammo2text = 'RESERVE: '..ammocount,'ALT-AMMO: '..ammocount2
 		local typetext,type2text = language.GetPhrase(ammotype..'_ammo'),language.GetPhrase(ammotype2..'_ammo')
 		
 		surface.SetFont('QTG_Ammo1')
@@ -525,7 +555,7 @@ if CLIENT then
 					local name = w:GetFireModeTbl()[w:GetFireMode()].name
 					name = name == 'Round Burst' and w.FireModeRoundBurstNum..' '..name or name
 
-					drawtext(name..s,'QTG_Ammo3',x-5,y,Color(chr,chg,chb,255*h_text),TEXT_ALIGN_RIGHT)
+					drawtext(string.upper(name..s),'QTG_Ammo3',x-5,y,Color(chr,chg,chb,255*h_text),TEXT_ALIGN_RIGHT)
 
 					x = x-10
 					y = y+25

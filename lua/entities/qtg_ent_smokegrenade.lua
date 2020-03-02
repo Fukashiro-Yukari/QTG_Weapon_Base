@@ -14,8 +14,12 @@ ENT.TouchNonPlayer	= 'SmokeGrenade.Bounce'
 
 ENT.Icon			= 'Q'
 
+local convar
+
 if CLIENT then
 	killicon.AddFont('qtg_ent_smokegrenade','QTG_CSKillIcons',ENT.Icon,Color(255,80,0))
+else
+	convar = CreateConVar('sv_qswep_smokegrenade_affect_npc',0,{FCVAR_REPLICATED,FCVAR_ARCHIVE,FCVAR_NOTIFY})
 end
 
 function ENT:Explode()
@@ -33,21 +37,21 @@ function ENT:Explode()
 			local prpos = VectorRand() * 20
 			prpos.z = prpos.z + 32
 			
-			local p = em:Add(table.Random(particles), pos + prpos)
+			local p = em:Add(table.Random(particles),pos+prpos)
 			
 			if p then
-				local gray = math.random(120, 200)
+				local gray = math.random(120,200)
 				
-				p:SetColor(gray, gray, gray)
+				p:SetColor(gray,gray,gray)
 				p:SetStartAlpha(255)
 				p:SetEndAlpha(200)
-				p:SetVelocity(VectorRand() * math.Rand(900, 1300))
+				p:SetVelocity(VectorRand()*math.Rand(900,1300))
 				p:SetLifeTime(0)
-				p:SetDieTime(math.Rand(40, 50))
-				p:SetStartSize(math.Rand(150, 250))
-				p:SetEndSize(math.Rand(1, 50))
-				p:SetRoll(math.random(-180, 180))
-				p:SetRollDelta(math.Rand(-0.1, 0.1))
+				p:SetDieTime(math.Rand(40,50))
+				p:SetStartSize(math.Rand(150,250))
+				p:SetEndSize(math.Rand(1,50))
+				p:SetRoll(math.random(-180,180))
+				p:SetRollDelta(math.Rand(-0.1,0.1))
 				p:SetAirResistance(600)
 				p:SetCollide(true)
 				p:SetBounce(0.4)
@@ -59,10 +63,14 @@ function ENT:Explode()
     end
 end
 
-QTG_Smokegranade_Pos = QTG_Smokegranade_Pos or {}
+if CLIENT then return end
+
+QSWEP_Smokegranade_Pos = QSWEP_Smokegranade_Pos or {}
 
 hook.Add('Think','qtg_ent_smokegranade',function()
-	for k,v in pairs(QTG_Smokegranade_Pos) do
+	if CLIENT or !convar:GetBool() then return end
+
+	for k,v in pairs(QSWEP_Smokegranade_Pos) do
 		if v.time < CurTime() then
 			for a,b in pairs(ents.FindInSphere(v.pos,150)) do
 				b:RemoveFlags(FL_NOTARGET)
@@ -85,8 +93,10 @@ hook.Add('Think','qtg_ent_smokegranade',function()
 end)
 
 hook.Add('EntityRemoved','qtg_ent_smokegranade',function(e)
+	if CLIENT or !convar:GetBool() then return end
+
 	if e:GetClass() == 'qtg_ent_smokegrenade' then
-		QTG_Smokegranade_Pos[#QTG_Smokegranade_Pos+1] = {
+		QSWEP_Smokegranade_Pos[#QSWEP_Smokegranade_Pos+1] = {
 			pos = e:GetPos(),
 			time = CurTime()+35
 		}

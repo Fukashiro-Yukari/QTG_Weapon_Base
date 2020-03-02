@@ -147,7 +147,6 @@ function SWEP:DrawWeaponSelection(x,y,wide,tall,alpha)
 		if self.Primary.ClipSize > 0 then
 			color = self:Clip1()/self.Primary.ClipSize > 0.25 and Color(255,230,0,alpha) or Color(255,0,0,alpha)
 			Text = (self.Chambering and self:Clip1() > self.Primary.ClipSize and self.Primary.ClipSize..'+'..self:Clip1()-self.Primary.ClipSize or self:Clip1())..'/'..self:Ammo1()
-			
 		elseif self:Ammo1() > 0 then
 			color = self:Ammo1() >= 2 and Color(255,230,0,alpha) or Color(255,0,0,alpha)
 			Text = self:Ammo1()

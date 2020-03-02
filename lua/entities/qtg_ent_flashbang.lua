@@ -14,9 +14,15 @@ ENT.TouchNonPlayer	= 'Flashbang.Bounce'
 
 ENT.Icon			= 'P'
 
+local convar
+
 if CLIENT then
 	killicon.AddFont('qtg_ent_flashbang','QTG_CSKillIcons',ENT.Icon,Color(255,80,0))
+else
+	convar = CreateConVar('sv_qswep_flashbang_affect_npc',0,{FCVAR_REPLICATED,FCVAR_ARCHIVE,FCVAR_NOTIFY})
 end
+
+QSWEP_Flashbang = QSWEP_Flashbang or {}
 
 function ENT:Explode()
     if CLIENT then
@@ -37,20 +43,20 @@ function ENT:Explode()
 			
 			local time = CurTime() + FlashTime
 			
-			if QEFFlashEndTime and QEFFlashEndTime < time or !QEFFlashEndTime then
-				QEFFlashEndTime = time
+			if QSWEP_FlashEndTime and QSWEP_FlashEndTime < time or !QSWEP_FlashEndTime then
+				QSWEP_FlashEndTime = time
 			else
 				return
 			end
 			
 			if FlashTime > 3 then
-				GEFFlashbangSoundID = GEFFlashbangSoundID and GEFFlashbangSoundID + 1 or 0
+				QSWEP_FlashbangSoundID = QSWEP_FlashbangSoundID and QSWEP_FlashbangSoundID+1 or 0
 				
-				sound.Generate('flashbangsound'..GEFFlashbangSoundID,11025,FlashTime-0.5,function(t)
+				sound.Generate('flashbangsound'..QSWEP_FlashbangSoundID,11025,FlashTime-0.5,function(t)
 					return math.sin(t*math.pi*2/11025*3500)*(1-t/(11025*(FlashTime-0.5)))/2
 				end)
 				
-				surface.PlaySound('flashbangsound'..GEFFlashbangSoundID)
+				surface.PlaySound('flashbangsound'..QSWEP_FlashbangSoundID)
 			end
 		end
 
@@ -63,26 +69,28 @@ function ENT:Explode()
 		l:SetKeyValue('distance',10000)
 		l:Fire('kill','',0.1)
 
-		local dis = 1000
-		for k,v in pairs(ents.FindInSphere(self:GetPos(),dis)) do
-			if v:IsNPC() then
-				local dist = v:GetPos():Distance(self:GetPos())
-				local FlashTime = 20-dist/(dis/2)
-				
-				if FlashTime < 2 then
-					FlashTime = 2
-				end
-				
-				if dist > 50 then
-					FlashTime = FlashTime * 0.2
-				end
+		if convar:GetBool() then
+			local dis = 1000
+			
+			for k,v in pairs(ents.FindInSphere(self:GetPos(),dis)) do
+				if v:IsNPC() then
+					local dist = v:GetPos():Distance(self:GetPos())
+					local FlashTime = 20-dist/(dis/2)
+					
+					if FlashTime < 2 then
+						FlashTime = 2
+					end
+					
+					if dist > 50 then
+						FlashTime = FlashTime * 0.2
+					end
 
-				local time = CurTime()+FlashTime
+					local time = CurTime()+FlashTime
 
-				if v.FlashEndTime and v.FlashEndTime < time or !v.FlashEndTime then
-					v.FlashEndTime = time
-				else
-					return
+					if v.FlashEndTime and v.FlashEndTime < time or !v.FlashEndTime then
+						v.FlashEndTime = time
+						QSWEP_Flashbang[v] = v
+					end
 				end
 			end
 		end
@@ -90,28 +98,32 @@ function ENT:Explode()
 end
 
 hook.Add('RenderScreenspaceEffects','qtg_ent_flashbang',function()
-    if QEFFlashEndTime then
-		if QEFFlashEndTime > CurTime() then
-			local alpha = (QEFFlashEndTime - CurTime()) / 4
+    if QSWEP_FlashEndTime then
+		if QSWEP_FlashEndTime > CurTime() then
+			local alpha = (QSWEP_FlashEndTime - CurTime()) / 4
 			
-			DrawMotionBlur(0.2, alpha, 0.05);
-		elseif QEFFlashEndTime + 0.3 > CurTime() then
-			DrawMotionBlur(0.2, 0.1, 0.05);
+			DrawMotionBlur(0.2, alpha, 0.05)
+		elseif QSWEP_FlashEndTime + 0.3 > CurTime() then
+			DrawMotionBlur(0.2, 0.1, 0.05)
 		end
 	end
 end)
 
 hook.Add('HUDPaint','qtg_ent_flashbang',function()
-	if QEFFlashEndTime and QEFFlashEndTime > CurTime() then
-		local alpha = 255 * (QEFFlashEndTime - CurTime()) / 6
+	if QSWEP_FlashEndTime and QSWEP_FlashEndTime > CurTime() then
+		local alpha = 255 * (QSWEP_FlashEndTime - CurTime()) / 6
 		
 		surface.SetDrawColor(255,255,255,alpha)
 		surface.DrawRect(0,0,ScrW(),ScrH())
 	end
 end)
 
+if CLIENT then return end
+
 hook.Add('Think','qtg_ent_flashbang',function()
-	for k,v in pairs(ents.GetAll()) do
+	if CLIENT or !convar:GetBool() then return end
+
+	for k,v in pairs(QSWEP_Flashbang) do
 		if IsValid(v) and v.FlashEndTime then
 			if v.FlashEndTime > CurTime() then
 				if !v.OldDisposition then
@@ -138,6 +150,8 @@ hook.Add('Think','qtg_ent_flashbang',function()
 
 				v.mDisposition = false
 			end
+		else
+			QSWEP_Flashbang[k] = nil
 		end
 	end
 end)
