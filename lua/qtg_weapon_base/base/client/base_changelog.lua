@@ -1,4 +1,4 @@
-QSWEP.Version = 1.24122
+QSWEP.Version = 1.24123
 QSWEP.Changelog = {}
 QSWEP.ChangelogDisplay = false
 
@@ -211,6 +211,13 @@ addlog("2020/3/2",{
 	'Fix: Flashbang and smokegrenade optimization',
 	'Add: Change angle after crouching',
 	'Add: Weapon bob change'
+})
+
+addlog("2020/3/3",{
+	'Fix: Fix playerspawn hook error',
+	'Add: New Inspect Menu',
+	'Add: Added Bump action',
+	'Add: Added weapon template'
 })
 
 local version = tostring(QSWEP.Version)

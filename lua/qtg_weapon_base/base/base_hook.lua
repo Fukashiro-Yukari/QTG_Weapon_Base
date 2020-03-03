@@ -152,6 +152,8 @@ end)
 
 if CLIENT then
 	QSWEP.ReadNet('fixplayerspawn',function(p)
+		if !IsValid(p) or !p:IsPlayer() then return end
+
 		local vm = p:GetViewModel()
 
 		for k,v in pairs(vm:GetMaterials()) do
@@ -246,29 +248,8 @@ end)
 
 if CLIENT then
 	local blurmat = Material('pp/blurscreen')
-	
 	local c_blur = 0
-	local h_Inspect = 0
-	
-	local HoldTypeList = {
-		['pistol'] = 'Pistol',
-		['smg'] = 'Sub-Machine Gun',
-		['grenade'] = 'Grenade',
-		['ar2'] = 'Rifle',
-		['shotgun'] = 'Shotgun',
-		['rpg'] = 'RPG',
-		['physgun'] = 'Physgun',
-		['crossbow'] = 'Crossbow',
-		['melee'] = 'Melee',
-		['slam'] = 'SLAM',
-		['fist'] = 'Fist',
-		['melee2'] = 'Melee',
-		['knife'] = 'Melee',
-		['duel'] = 'Duel Pistol',
-		['camera'] = 'Camera',
-		['magic'] = 'Fist',
-		['revolver'] = 'Revolver',
-	}
+	local darkness = QSWEP.GetConVar('insp_darkness')
 	
 	addhook('RenderScreenspaceEffects',function()
 		if !QSWEP.PlyUseQWEP() then return end
@@ -291,6 +272,9 @@ if CLIENT then
 			
 			local b = 5
 			local w,h = ScrW(),ScrH()
+
+			surface.SetDrawColor(0,0,0,darkness:GetFloat()*c_blur)
+			surface.DrawRect(-5,-5,ScrW()+5,ScrH()+5)
 			
 			for i = 1,b do
 				blurmat:SetFloat('$blur',i*c_blur)
@@ -298,9 +282,6 @@ if CLIENT then
 				render.UpdateScreenEffectTexture()
 				surface.DrawTexturedRect(0,0,w,h)
 			end
-			
-			surface.SetDrawColor(0,0,0,120*c_blur)
-			surface.DrawRect(0,0,ScrW(),ScrH())
 		end
 	end)
 
@@ -308,117 +289,6 @@ if CLIENT then
 		draw.SimpleText(a,b,c+2,d+2,Color(0,0,0,e.a-55),f,g)
 		draw.SimpleText(a,b,c,d,e,f,g)
 	end
-	
-	addhook('DrawOverlay',function()
-		if gui.IsGameUIVisible() then return end
-		
-		local p = LocalPlayer()
-
-		if !IsValid(p) then return end
-		if GetViewEntity() != p then return end
-
-		local pos = {x=50,y=150}
-		local x = pos.x
-		local y = pos.y
-		local w = p.GetActiveWeapon and p:GetActiveWeapon() or nil
-		
-		if !IsValid(w) then return end
-		if !QSWEP.PlyUseQWEP() then return end
-		
-		local clip1,clip2 = w:Clip1(),w:Clip2()
-		local ammotype,ammotype2 = w.Primary.Ammo,w.Secondary.Ammo
-		local ammocount,ammocount2 = w.Owner:GetAmmoCount(ammotype),w.Owner:GetAmmoCount(ammotype2)
-		local captext = 'Capacity : '..(w.Chambering and (w.Akimbo and w.Primary.ClipSize..' + 2 Rounds' or w.Primary.ClipSize..' + 1 Rounds') or w.Primary.ClipSize..' Rounds')
-		local cap2text = 'ALT-Capacity : '..(w.Chambering and (w.Akimbo and w.Secondary.ClipSize..' + 2 Rounds' or w.Secondary.ClipSize..' + 1 Rounds') or w.Secondary.ClipSize..' Rounds')
-		local ammotext,ammo2text = 'RESERVE: '..ammocount,'ALT-Ammo: '..ammocount2
-		local typetext,type2text = language.GetPhrase(ammotype..'_ammo'),language.GetPhrase(ammotype2..'_ammo')
-		
-		h_Inspect = math.Approach(h_Inspect or 0,w.Inspecting and 1 or 0,FrameTime()*3)
-		
-		if h_Inspect > 0 then
-			local icolor = Color(255,255,255,255*h_Inspect)
-
-			drawtext(w.PrintName,'QTG_InspectName',x,y,icolor,TEXT_ALIGN_LIFE)
-			
-			if HoldTypeList[w.HoldType] or w.WeaponType then
-				y = y+55
-				local HoldTypeText = w.WeaponType != '' and w.WeaponType or HoldTypeList[w.HoldType]
-				drawtext(HoldTypeText,'QTG_InspectName2',x,y,icolor,TEXT_ALIGN_LIFE)
-			end
-			
-			if w.Instructions != '' then
-				y = y+100
-				
-				if w.InspectMarkup == nil then
-					local str
-					local text_color='<color=0,0,0,0>'
-					str = '<font=QTG_InspectCat>'..text_color..w.Instructions..'</color>\n</font>'
-					
-					w.InspectMarkup = markup.Parse(str,500)
-				end
-				
-				if w.InspectMarkupT == nil then
-					local str
-					local text_color='<color='..icolor.r..','..icolor.g..','..icolor.b..','..icolor.a..'>'
-					str = '<font=QTG_InspectCat>'..text_color..w.Instructions..'</color>\n</font>'
-
-					w.InspectMarkupT = markup.Parse(str,500)
-				end
-				
-				if w.Inspecting then
-					w.InspectMarkup:Draw(x+3,y+3,nil,nil,255)
-					w.InspectMarkupT:Draw(x,y,nil,nil,255)
-
-					if w.InspectMarkupT['totalHeight'] < 400 then
-						y = y+w.InspectMarkupT['totalHeight']+50
-					else
-						x = x+505
-					end
-				end
-			else
-				y = y+100
-			end
-			
-			icolor = Color(100,100,255,255*h_Inspect)
-			
-			local cat = w.Category or 'Other'
-			
-			drawtext(cat,'QTG_InspectCat',x,y,icolor,TEXT_ALIGN_LIFE)
-			
-			x = x+10
-			y = y+30
-			
-			if w.Author != '' then
-				drawtext('Author : '..w.Author,'QTG_InspectCat',x,y,icolor,TEXT_ALIGN_LIFE)
-			else
-				drawtext('Base Author : Neptune QTG','QTG_InspectCat',x,y,icolor,TEXT_ALIGN_LIFE)
-			end
-			
-			if clip1>=0 then
-				y = y+30
-
-				drawtext(captext,'QTG_InspectCat',x,y,icolor,TEXT_ALIGN_LIFE)
-			end
-			
-			if w:GetPrimaryAmmoType() != -1 then
-				y = y+30
-
-				drawtext('Ammo : '..typetext,'QTG_InspectCat',x,y,icolor,TEXT_ALIGN_LIFE)
-			end
-			
-			if clip2>=0 then
-				y = y+30
-
-				drawtext(cap2text,'QTG_InspectCat',x,y,icolor,TEXT_ALIGN_LIFE)
-			end
-			
-			if w:GetSecondaryAmmoType() != -1 then
-				y = y+30
-
-				drawtext('ALT-Ammo : '..type2text,'QTG_InspectCat',x,y,icolor,TEXT_ALIGN_LIFE)
-			end
-		end
-	end)
 	
 	local kd_old
 	addhook('Think',function()

@@ -6,14 +6,40 @@ function QSWEP.AddConVar(a,b,c)
 	end
 end
 
-function QSWEP.GetConVar(a,b)
+function QSWEP.AddConVarColor(a,b,c,b2)
+	if !IsColor(b) then
+		QSWEP.Error('Need to fill in color, but the value filled in is not color!',true)
+
+		return
+	end
+
+	QSWEP.AddConVar(a..'_r',b.r,c)
+	QSWEP.AddConVar(a..'_g',b.g,c)
+	QSWEP.AddConVar(a..'_b',b.b,c)
+
+	if b2 then
+		QSWEP.AddConVar(a..'_a',b.a,c)
+	end
+end
+
+function QSWEP.GetConVar(a,b,c)
 	if ConVarExists('sv_qswep_'..a) or b == 'sv' then
 		return GetConVar('sv_qswep_'..a)
 	elseif ConVarExists('cl_qswep_'..a) or b == 'cl' then
 		return GetConVar('cl_qswep_'..a)
 	end
 
-	QSWEP.Error('"'..a..'" QTG Weapon Base Convar Not Found!')
+	if !c then
+		QSWEP.Error('"'..a..'" QTG Weapon Base Convar Not Found!')
+	end
+end
+
+function QSWEP.GetConVarColor(n,b)
+	local r,g,b,a = QSWEP.GetConVar(n..'_r',b),QSWEP.GetConVar(n..'_g',b),QSWEP.GetConVar(n..'_b',b),QSWEP.GetConVar(n..'_a',b,true)
+
+	if r and g and b then
+		return Color(r:GetFloat(),g:GetFloat(),b:GetFloat(),a and a:GetFloat() or 255)
+	end
 end
 
 QSWEP.GetConvar = QSWEP.GetConVar
@@ -46,6 +72,14 @@ QSWEP.AddConVar('vm_idle',1,true)
 QSWEP.AddConVar('vm_crouch',1,true)
 QSWEP.AddConVar('vm_sway',10,true)
 QSWEP.AddConVar('view_tilt',0,true)
+QSWEP.AddConVar('insp_darkness',100,true)
+
+QSWEP.AddConVarColor('insp_color',Color(255,255,255),true)
+QSWEP.AddConVarColor('insp_color2',Color(0,255,255),true)
+QSWEP.AddConVarColor('insp_color3',Color(100,100,255),true)
+QSWEP.AddConVarColor('insp_color4',Color(255,255,255),true)
+QSWEP.AddConVarColor('insp_color5',Color(0,160,255),true)
+QSWEP.AddConVarColor('insp_color6',Color(255,255,255),true)
 
 QSWEP.AddConVar('altatt_key',0)
 QSWEP.AddConVar('ironsights',1)

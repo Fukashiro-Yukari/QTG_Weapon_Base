@@ -20,12 +20,15 @@ local c_luaatt = 0
 
 local c_oang = Angle()
 
+local c_bump = 0
+local bumpmax = 1000
+
 SWEP.InspectionPos 			= Vector(13.748,-12.551,0.303)
 SWEP.InspectionAng 			= Vector(35.715,43.609,35.206)
 
 SWEP.LuaAnimAttPos			= Vector(0,-2,0)
 
-SWEP.CrouchingChangeAng	= true
+SWEP.CrouchingChangeAng		= true
 
 function SWEP:GetViewModelPosition(pos,ang)
 	local ct,ft = CurTime(),FrameTime()
@@ -54,6 +57,7 @@ function SWEP:GetViewModelPosition(pos,ang)
 	pos = pos+-10.148*c_holster*ang:Forward()
 	pos = pos+-15.321*c_holster*ang:Up()
 	
+	pos,ang = self:Bump(pos,ang,ft,iftp)
 	pos,ang = self:Sway(pos,ang,ft,iftp)
 	pos,ang = self:Movement(pos,ang,ct,ft,iftp)
 	
@@ -184,6 +188,29 @@ function SWEP:LuaAnimAttf(pos,ang,ft,iftp)
 	return pos,ang
 end
 
+function SWEP:Bump(pos,ang,ft,iftp)
+	if !IsValid(self.Owner) then return pos,ang end
+
+	local t = self.Owner:GetEyeTrace()
+	local dist = t.StartPos:DistToSqr(t.HitPos)
+
+	if iftp then
+		c_bump = Lerp(math.Clamp(ft*5,0,1),c_bump or 0,dist < bumpmax and bumpmax-dist or 0)
+	end
+
+	if c_bump > 0 then
+		ang.p = ang.p+-(c_bump*0.010)
+
+		if !self.Akimbo and (self.Base == 'qtg_weapon_base' or self.Base == 'qtg_weapon_sniper_base') then
+			ang.y = ang.y+(self.ViewModelFlip and -(c_bump*0.010) or (c_bump*0.010))
+		end
+
+		pos = pos+-(c_bump*0.015)*ang:Forward()
+	end
+
+	return pos,ang
+end
+
 local sway = QSWEP.GetConVar('vm_sway')
 function SWEP:Sway(pos,ang,ft,iftp)
 	if !IsValid(self.Owner) then return pos,ang end
@@ -198,7 +225,7 @@ function SWEP:Sway(pos,ang,ft,iftp)
 	c_oang = c_oang*(sway:GetFloat()*0.1)
 	
 	if self:GetState('zoom') then
-		c_oang = c_oang/1.2
+		c_oang = c_oang/1.8
 	end
 
 	ang = self.ViewModelFlip and ang-c_oang or ang+c_oang
@@ -253,7 +280,7 @@ function SWEP:Movement(pos,ang,ct,ft,iftp)
 		ang.p = ang.p+15*c_safety
 	end
 
-	if self.CrouchingChangeAng and c_crouch > 0 and (self.Base == 'qtg_weapon_base' or self.Base == 'qtg_weapon_sniper_base') then
+	if self.CrouchingChangeAng and c_crouch > 0 and (!self.Akimbo and (self.Base == 'qtg_weapon_base' or self.Base == 'qtg_weapon_sniper_base')) then
 		pos = pos+(self.ViewModelFlip and 5 or -5)*c_crouch*ang:Right()
 		pos = pos+5*c_crouch*ang:Forward()
 		pos = pos+-8*c_crouch*ang:Up()

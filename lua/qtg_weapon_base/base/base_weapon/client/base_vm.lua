@@ -5,6 +5,7 @@ local c_blur = 0
 local c_blur2 = 0
 local blur_r = QSWEP.GetConvar('blur_reload')
 local blur_d = QSWEP.GetConvar('blur_deploy')
+local darkness = QSWEP.GetConVar('insp_darkness')
 
 function SWEP:PreDrawViewModel(vm)
 	c_blur = math.Approach(c_blur or 0,self.Inspecting and 1 or 0,FrameTime()*3)
@@ -13,15 +14,18 @@ function SWEP:PreDrawViewModel(vm)
 		cam.Start2D()
 			surface.SetDrawColor(255,255,255)
 			surface.SetMaterial(blurmat)
+
 			local b = 5
 			local w,h = ScrW(),ScrH()
+
 			for i = 1,b do
 				blurmat:SetFloat('$blur',i*c_blur)
 				blurmat:Recompute()
 				render.UpdateScreenEffectTexture()
 				surface.DrawTexturedRect(0,0,w,h)
 			end
-			surface.SetDrawColor(0,0,0,120*c_blur)
+
+			surface.SetDrawColor(0,0,0,darkness:GetFloat()*c_blur)
 			surface.DrawRect(0,0,ScrW(),ScrH())
 		cam.End2D()
 	end
@@ -36,6 +40,7 @@ function SWEP:PreDrawViewModel(vm)
 		cam.Start2D()
 			surface.SetDrawColor(255,255,255)
 			surface.SetMaterial(blurmat)
+
 			local b = 3
 			local w,h = ScrW(),ScrH()
 			for i = 1, b do
@@ -44,6 +49,7 @@ function SWEP:PreDrawViewModel(vm)
 				render.UpdateScreenEffectTexture()
 				surface.DrawTexturedRect(0,0,w,h)
 			end
+
 		cam.End2D()
 	end
 
