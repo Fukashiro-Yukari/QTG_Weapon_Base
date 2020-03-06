@@ -199,7 +199,7 @@ function SWEP:Bump(pos,ang,ft,iftp)
 	local dist = t.StartPos:DistToSqr(t.HitPos)
 
 	if iftp then
-		c_bump = Lerp(math.Clamp(ft*8,0,1),c_bump or 0,dist < bumpmax and bumpmax-dist or 0)
+		c_bump = Lerp(math.Clamp(ft*8,0,1),c_bump or 0,dist < bumpmax and !self:GetState('zoom') and bumpmax-dist or 0)
 	end
 
 	if c_bump > 0 then
