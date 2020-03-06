@@ -1,5 +1,6 @@
 DEFINE_BASECLASS('qtg_weapon_base')
 
+SWEP.WeaponType				= 'Shotgun'
 SWEP.PrintName				= 'Heavy Automatic Shotgun'
 SWEP.Slot		        	= 3
 SWEP.SlotPos				= 4

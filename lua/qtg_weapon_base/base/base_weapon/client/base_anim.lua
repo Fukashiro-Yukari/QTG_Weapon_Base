@@ -199,13 +199,15 @@ function SWEP:Bump(pos,ang,ft,iftp)
 	local dist = t.StartPos:DistToSqr(t.HitPos)
 
 	if iftp then
-		c_bump = Lerp(math.Clamp(ft*8,0,1),c_bump or 0,dist < bumpmax and !self:GetState('zoom') and bumpmax-dist or 0)
+		c_bump = Lerp(math.Clamp(ft*8,0,1),c_bump or 0,dist < bumpmax and bumpmax-dist or 0)
 	end
 
 	if c_bump > 0 then
-		ang.p = ang.p+-(c_bump*0.010)
+		if !self:GetState('zoom') then
+			ang.p = ang.p+-(c_bump*0.010)
+		end
 
-		if !self.Akimbo and (self.Base == 'qtg_weapon_base' or self.Base == 'qtg_weapon_sniper_base') then
+		if !self.Akimbo and (self.Base == 'qtg_weapon_base' or self.Base == 'qtg_weapon_sniper_base') and !self:GetState('zoom') then
 			ang.y = ang.y+(self.ViewModelFlip and -(c_bump*0.010) or (c_bump*0.010))
 		end
 
