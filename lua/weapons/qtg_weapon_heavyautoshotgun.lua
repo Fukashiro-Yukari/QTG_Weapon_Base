@@ -41,7 +41,7 @@ SWEP.Primary.Cone			= 0.04
 SWEP.Primary.Spread         = 0.5
 SWEP.Primary.SpreadMax      = 2.4
 SWEP.Primary.Delay			= 0.16
-SWEP.Primary.Ammo			= 'smg1'
+SWEP.Primary.Ammo			= 'buckshot'
 
 SWEP.Secondary.CanUse		= false
 
