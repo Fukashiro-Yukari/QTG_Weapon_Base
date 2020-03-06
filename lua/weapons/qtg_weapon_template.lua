@@ -1,56 +1,56 @@
 DEFINE_BASECLASS('qtg_weapon_base')
 
-SWEP.HoldType 						= 'pistol'
-SWEP.WeaponType						= ''
-SWEP.PrintName						= 'Scripted Weapon'
-SWEP.Author							= ''
-SWEP.Contact						= ''
-SWEP.Purpose						= ''
-SWEP.Instructions					= ''
+SWEP.HoldType 						= 'pistol' -- Weapon holdtype
+SWEP.WeaponType						= '' -- Weapon type (show in c menu, if not filled, it is the default type)
+SWEP.PrintName						= 'Scripted Weapon' -- Weapon name
+SWEP.Author							= '' -- You name (or my name)
+SWEP.Contact						= '' -- Contact
+SWEP.Purpose						= '' -- Purpose
+SWEP.Instructions					= '' -- Fill in your personality introduction
 
 SWEP.ViewModelFOV					= 54
 SWEP.ViewModelFlip					= false
-SWEP.ViewModel						= 'models/weapons/v_pistol.mdl'
-SWEP.ViewModelTxd					= {}
-SWEP.WorldModel						= 'models/weapons/w_357.mdl'
-SWEP.WorldModelTxd					= {}
+SWEP.ViewModel						= 'models/weapons/v_pistol.mdl' -- Weapon view model
+SWEP.ViewModelTxd					= {} -- Custom weapon view sub material
+SWEP.WorldModel						= 'models/weapons/w_357.mdl' -- Weapon world model
+SWEP.WorldModelTxd					= {} -- Custom weapon world sub material
 
-SWEP.Slot					        = 0
-SWEP.SlotPos				        = 10
-SWEP.DrawCrosshair			        = true
+SWEP.Slot					        = 0 -- slot
+SWEP.SlotPos				        = 10 -- slot pos
+SWEP.DrawCrosshair			        = true -- 
 
 SWEP.Spawnable						= false
 SWEP.AdminOnly						= false
 
-SWEP.CanIdle						= true
-SWEP.CanRun							= true
+SWEP.CanIdle						= true -- Allow weapons to idle
+SWEP.CanRun							= true -- Allow weapons running
 
-SWEP.ReloadAnim						= ACT_VM_RELOAD
-SWEP.ReloadAnimEmpty				= ACT_VM_RELOAD_EMPTY
-SWEP.ReloadSilencerAnim				= ACT_VM_RELOAD_SILENCED
-SWEP.ReloadSound					= 'Weapon_Pistol.Reload'
-SWEP.ReloadCustomTime				= 2
-SWEP.ReloadViewBob					= true
-SWEP.ReloadViewBobAng				= Angle(0,0,-90)
--- SWEP.ReloadPos                      = Vector(0,0,0)
--- SWEP.ReloadAng                      = Vector(0,0,0)
+SWEP.ReloadAnim						= ACT_VM_RELOAD -- Weapon reload anim
+SWEP.ReloadAnimEmpty				= ACT_VM_RELOAD_EMPTY -- Weapon reload anim too, but weapon is empty
+SWEP.ReloadSilencerAnim				= ACT_VM_RELOAD_SILENCED -- Weapon reload anim too, but weapon has a silencer
+SWEP.ReloadSound					= 'Weapon_Pistol.Reload' -- Weapon reload sound
+SWEP.ReloadCustomTime				= 2 -- Weapon custom reload time, if weapon allows custom reloading anim
+SWEP.ReloadViewBob					= true -- Allow weapon reload angle swing
+SWEP.ReloadViewBobAng				= Angle(0,0,-90) -- Weapon reload angle
+-- SWEP.ReloadPos                      = Vector(0,0,0) -- Weapon custom reload vector, if input representative allows custom reloading
+-- SWEP.ReloadAng                      = Vector(0,0,0) -- Weapon custom reload angle, if input representative allows custom reloading
 
-SWEP.DeployAnim						= ACT_VM_DRAW
-SWEP.DeploySilencerAnim				= ACT_VM_DRAW_SILENCED
-SWEP.DeployEmptyAnim				= ACT_VM_DRAW_EMPTY
-SWEP.DeploySound					= ''
-SWEP.DeployCustom					= false
-SWEP.DeployCustomTime				= 1
-SWEP.DeployViewBob					= true
-SWEP.DeployViewBobAng				= Angle(0,0,-90)
+SWEP.DeployAnim						= ACT_VM_DRAW -- Weapon deploy anim
+SWEP.DeploySilencerAnim				= ACT_VM_DRAW_SILENCED -- Weapon deploy anim too, but weapon has a silencer
+SWEP.DeployEmptyAnim				= ACT_VM_DRAW_EMPTY -- Weapon deploy anim too, but weapon is empty
+SWEP.DeploySound					= '' -- Weapon deploy sound
+SWEP.DeployCustom					= false -- Allow custom weapon deploy anim
+SWEP.DeployCustomTime				= 1 -- Custom weapon deploy anim time
+SWEP.DeployViewBob					= true -- Allow weapon deploy angle swing
+SWEP.DeployViewBobAng				= Angle(0,0,-90) -- Weapon deploy angle
 
-SWEP.CanHolster						= true
-SWEP.HolsterAnim					= ACT_VM_HOLSTER
-SWEP.HolsterSound					= ''
-SWEP.HolsterCustom					= false
+SWEP.CanHolster						= true -- Allow weapon holster anim
+SWEP.HolsterAnim					= ACT_VM_HOLSTER -- weapon holster anim
+SWEP.HolsterSound					= '' -- weapon holster sound
+SWEP.HolsterCustom					= false -- Allow weapon custom holster anim
 
-SWEP.CanPush					    = false
-SWEP.PushAnim					    = 'melee'
+SWEP.CanPush					    = false -- Allow the use of weapons to propel the entity
+SWEP.PushAnim					    = 'melee' -- 
 SWEP.PushSwingSound				    = ''
 SWEP.PushHitWorldSound			    = ''
 SWEP.PushHitInfectedSound		    = ''
@@ -180,8 +180,8 @@ SWEP.Chambering						= true
 SWEP.NPCWeaponsOnly					= false
 SWEP.PLYWeaponsOnly					= false
 
-SWEP.Silencer						= false
-SWEP.SilencerDef					= false
+SWEP.Silencer						= false -- allows toggle silencer
+SWEP.SilencerDef					= false -- Silent mode by default
 SWEP.SilencerDetachAnim				= ACT_VM_DETACH_SILENCER
 SWEP.SilencerAttachAnim				= ACT_VM_ATTACH_SILENCER
 SWEP.SilencerToggle					= true
@@ -219,15 +219,17 @@ SWEP.NPCBulletSpreadGood		    = 20
 SWEP.NPCBulletSpreadVeryGood	    = 15
 SWEP.NPCBulletSpreadPerect		    = 10
 
-SWEP.WepSelectIcon			        = surface.GetTextureID('weapons/swep')
-SWEP.SpeechBubbleLid		        = surface.GetTextureID('gui/speech_lid')
+if CLIENT then
+	SWEP.WepSelectIcon			    = surface.GetTextureID('weapons/swep')
+	SWEP.SpeechBubbleLid		    = surface.GetTextureID('gui/speech_lid')
+end
         
 SWEP.DrawWeaponInfoBox		        = false
 SWEP.BounceWeaponIcon		        = true
 SWEP.OldBounceWeaponIcon	        = false
         
 SWEP.WeaponInfoDisplayAmmo	        = true
-SWEP.WeaponInfoType			        = 0
+SWEP.WeaponInfoType			        = QSWEP.ENUM.WEPINFO.DEF
 SWEP.WeaponInfoModelCustom	        = ''
 SWEP.WeaponInfoModelSize	        = 45
 SWEP.WeaponInfoFontCustom	        = 'QTG_HL2SelectIcons'
@@ -245,7 +247,7 @@ SWEP.WElements 					    = {}
 SWEP.ShowViewModel 				    = true
 SWEP.ShowWorldModel 			    = true
 
-SWEP.KillIconType			        = 0
+SWEP.KillIconType			        = QSWEP.ENUM.KILLICON.DEF
 SWEP.KillIconFont			        = 'HL2MPTypeDeath'
 SWEP.KillIconAdd			        = ''
 SWEP.KillIconColor			        = Color(255,80,0)
