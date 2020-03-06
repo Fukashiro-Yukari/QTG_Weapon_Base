@@ -1,4 +1,4 @@
-QSWEP.Version = 1.24123
+QSWEP.Version = 1.241231
 QSWEP.Changelog = {}
 QSWEP.ChangelogDisplay = false
 
@@ -218,6 +218,11 @@ addlog("2020/3/3",{
 	'Add: New Inspect Menu',
 	'Add: Added Bump action',
 	'Add: Added weapon template'
+})
+
+addlog("2020/3/6",{
+	'Fix: Fixed weapon swing delay',
+	'Fix: Fixed running viewing angle',
 })
 
 local version = tostring(QSWEP.Version)

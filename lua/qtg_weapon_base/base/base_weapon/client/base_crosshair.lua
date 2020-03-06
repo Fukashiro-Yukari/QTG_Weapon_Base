@@ -10,13 +10,13 @@ SWEP.IronSightsCrosshair	= false
 function SWEP:CanDrawCrosshair()
 	local drawply = LocalPlayer():ShouldDrawLocalPlayer()
 
-	return (((self:GetState('zoom') and (drawply or self.IronSightsCrosshair)) or self:GetState('idle')) and !self.Inspecting)
+	return (((self:GetState('zoom') and (drawply or self.IronSightsCrosshair)) or self:GetState('idle')) and !self.Inspecting and self:GetFireModeName() != 'Safety')
 end
 
 function SWEP:CanDrawCrosshair2()
 	local drawply = LocalPlayer():ShouldDrawLocalPlayer()
 
-	return self:GetState('push') and !self.Inspecting
+	return self:GetState('push') and !self.Inspecting and self:GetFireModeName() != 'Safety'
 end
 
 function SWEP:DoDrawCrosshair(x,y)
