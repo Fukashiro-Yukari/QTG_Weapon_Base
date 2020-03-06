@@ -233,7 +233,7 @@ function SWEP:Sway(pos,ang,ft,iftp)
 	end
 
 	c_dang = self.ViewModelFlip and ang-c_oang or ang+c_oang
-	ang = LerpAngle(math.Clamp(ft,0,1),c_dang,c_dang)
+	ang = LerpAngle(math.Clamp(ft/2,0,1),c_dang,c_dang)
 	
     return pos,ang
 end

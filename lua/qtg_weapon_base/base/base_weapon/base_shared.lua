@@ -60,6 +60,7 @@ SWEP.ShotgunReload					= true
 SWEP.ShotgunStartReloadTime			= 0.5
 SWEP.ShotgunReloadTime				= 0.5
 SWEP.ShotgunEndReloadSound			= ''
+SWEP.ShotgunChambering				= false
 
 SWEP.Akimbo							= false
 
@@ -519,7 +520,7 @@ function SWEP:SetWeaponint()
 	self.IsQTGWeapon = true
 	self.Inspecting = false
 	
-	if self.Shotgun then
+	if self.Shotgun and !self.ShotgunChambering then
 		self.Chambering = false
 	end
 
@@ -1539,7 +1540,10 @@ function SWEP:Deploy()
 	self:SetWeapon()
 
 	self.Inspecting = false
-	self.c_oang = nil
+
+	if CLIENT then
+		self.c_oang = self:GetOwner():EyeAngles()
+	end
 
 	timer.Simple(0,function()
 		if !IsValid(self) then return end
