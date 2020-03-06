@@ -224,16 +224,16 @@ function SWEP:Sway(pos,ang,ft,iftp)
 	c_oang = LerpAngle(math.Clamp(ft*5,0,1),c_oang,self.c_oang-ang)
 
 	c_oang = c_oang*(sway:GetFloat()*0.1)
-	c_oang.p = math.Clamp(c_oang.p,-50,50)
-	c_oang.y = math.Clamp(c_oang.y,-50,50)
-	c_oang.r = math.Clamp(c_oang.r,-50,50)
+	c_oang.p = math.Clamp(c_oang.p,-45,45)
+	c_oang.y = math.Clamp(c_oang.y,-45,45)
+	c_oang.r = math.Clamp(c_oang.r,-45,45)
 	
 	if self:GetState('zoom') then
 		c_oang = LerpAngle(math.Clamp(ft*60,0,1),c_oang,c_oang/1.8)
 	end
 
 	c_dang = self.ViewModelFlip and ang-c_oang or ang+c_oang
-	ang = LerpAngle(math.Clamp(ft*15,0,1),c_dang,c_dang)
+	ang = LerpAngle(math.Clamp(ft,0,1),c_dang,c_dang)
 	
     return pos,ang
 end
