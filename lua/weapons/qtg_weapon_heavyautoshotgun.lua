@@ -44,8 +44,6 @@ SWEP.Primary.SpreadMax      = 2.4
 SWEP.Primary.Delay			= 0.16
 SWEP.Primary.Ammo			= 'buckshot'
 
-SWEP.Secondary.CanUse		= false
-
 SWEP.IronSightsPos 			= Vector(-5.943,-5.623,2.417)
 SWEP.IronSightsAng 			= Vector(0,0,0)
 

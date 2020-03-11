@@ -253,12 +253,13 @@ function SWEP:Movement(pos,ang,ct,ft,iftp)
 
 	local v = self.Owner:GetVelocity():GetNormalized()
 	local rd = self.Owner:GetRight():Dot(v)*20
+	local isrun = s > 300^2 and self.Owner:OnGround()
 
 	if iftp then
 		local ftt = math.min(ft*8,1)
 		c_move = Lerp(ftt,c_move or 0,self.Owner:OnGround() and m or 0)
 		c_sight = Lerp(ftt, c_sight or 0,self:GetState('zoom') and self.Owner:OnGround() and 0.15 or 1)
-		c_move2 = self:GetState('run') and 12 or 9
+		c_move2 = isrun and 12 or 9
 
 		local jump = math.Clamp(self.Owner:GetVelocity().z/120,-0.2,0.2)
 		local jump2 = math.Clamp(self.Owner:GetVelocity().z/120,-2,1.5)
@@ -284,7 +285,7 @@ function SWEP:Movement(pos,ang,ct,ft,iftp)
 	if c_runing > 0 then
 		ang.p = ang.p+-c_runview*c_runing
 
-		pos = pos+-(c_runview*0.25)*c_runing*ang:Forward()
+		pos = pos+-(c_runview*0.31)*c_runing*ang:Forward()
 		pos = pos+-(c_runview*0.1)*c_runing*ang:Up()
 	end
 
@@ -293,11 +294,12 @@ function SWEP:Movement(pos,ang,ct,ft,iftp)
 	end
 
 	if self.CrouchingChangeAng and c_crouch > 0 and (!self.Akimbo and (self.Base == 'qtg_weapon_base' or self.Base == 'qtg_weapon_sniper_base')) then
-		pos = pos+(self.ViewModelFlip and 5 or -5)*c_crouch*ang:Right()
-		pos = pos+5*c_crouch*ang:Forward()
-		pos = pos+-8*c_crouch*ang:Up()
-
+		ang.p = ang.p-5*c_crouch
 		ang.r = ang.r+(self.ViewModelFlip and 45 or -45)*c_crouch
+
+		pos = pos+(self.ViewModelFlip and 13 or -13)*c_crouch*ang:Right()
+		pos = pos+8*c_crouch*ang:Forward()
+		pos = pos+-2*c_crouch*ang:Up()
 	end
 
 	if bob:GetFloat() > 0 and c_move > 0 then

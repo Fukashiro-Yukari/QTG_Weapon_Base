@@ -17,12 +17,10 @@ local function load(b)
 end
 load()
 
-local pass = function() end
 local old = getmetatable(_G) or {}
-local new = table.Copy(old)
-local oldf = old.__index or pass
+local oldf = old.__index or function() end
 
-function new.__index(t,k,...)
+function old.__index(t,k,...)
     if k == 'QWEP' then
         load(true)
 
@@ -32,4 +30,4 @@ function new.__index(t,k,...)
     return oldf(t,k,...)
 end
 
-setmetatable(_G,new)
+setmetatable(_G,old)
