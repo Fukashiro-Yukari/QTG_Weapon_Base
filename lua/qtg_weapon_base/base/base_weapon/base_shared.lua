@@ -1488,7 +1488,7 @@ function SWEP:Holster(w)
 			return false
 		end
 		
-		if IsValid(self) then
+		if IsValid(self) and IsValid(self.__vm) then
 			self:SetStateTime(CurTime()+math.min(self.__vm:SequenceDuration(),0.6))
 		end
 		

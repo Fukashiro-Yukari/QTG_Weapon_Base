@@ -34,9 +34,9 @@ SWEP.Primary.DefaultClip	= 30
 SWEP.Primary.Automatic		= true
 SWEP.Primary.NumShots		= 1
 SWEP.Primary.Recoil			= 1
-SWEP.Primary.Cone			= 0.022
-SWEP.Primary.Spread         = 0.5
-SWEP.Primary.SpreadMax      = 2
+SWEP.Primary.Cone			= 0
+SWEP.Primary.Spread         = 0.4
+SWEP.Primary.SpreadMax      = 1.5
 SWEP.Primary.Delay			= 0.1
 SWEP.Primary.Ammo			= 'AR2'
 
