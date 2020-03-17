@@ -70,7 +70,7 @@ QSWEP.AddConVar('blur_deploy',0,true)
 QSWEP.AddConVar('vm_bob',1,true)
 QSWEP.AddConVar('vm_idle',1,true)
 QSWEP.AddConVar('vm_crouch',1,true)
-QSWEP.AddConVar('vm_sway',10,true,0,2)
+QSWEP.AddConVar('vm_sway',1.2,true,0,2)
 QSWEP.AddConVar('view_tilt',0,true)
 QSWEP.AddConVar('insp_darkness',100,true)
 
