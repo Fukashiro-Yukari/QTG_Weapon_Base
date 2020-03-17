@@ -27,7 +27,7 @@ SWEP.ReloadSilencerAnim				= ACT_VM_RELOAD_SILENCED
 SWEP.ReloadSound					= 'Weapon_Pistol.Reload'
 SWEP.ReloadCustomTime				= 2
 SWEP.ReloadViewBob					= true
-SWEP.ReloadViewBobAng				= Angle(0,0,-90)
+SWEP.ReloadViewBobAng				= -90
 
 SWEP.DeployAnim						= ACT_VM_DRAW
 SWEP.DeploySilencerAnim				= ACT_VM_DRAW_SILENCED
@@ -36,7 +36,7 @@ SWEP.DeploySound					= ''
 SWEP.DeployCustom					= false
 SWEP.DeployCustomTime				= 1
 SWEP.DeployViewBob					= true
-SWEP.DeployViewBobAng				= Angle(0,0,-90)
+SWEP.DeployViewBobAng				= -90
 
 SWEP.CanHolster						= true
 SWEP.HolsterAnim					= ACT_VM_HOLSTER
@@ -571,6 +571,14 @@ function SWEP:SetWeaponint()
 
 	if self.ReloadingPos then
 		self.ReloadPos = self.ReloadingPos
+	end
+
+	if isangle(self.DeployViewBobAng) then
+		self.DeployViewBobAng = self.DeployViewBobAng.r
+	end
+
+	if isangle(self.ReloadViewBobAng) then
+		self.ReloadViewBobAng = self.ReloadViewBobAng.r
 	end
 end
 

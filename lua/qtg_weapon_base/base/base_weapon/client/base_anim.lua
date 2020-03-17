@@ -381,7 +381,7 @@ function SWEP:CalcView(ply,pos,ang,fov)
 			if bool then
 				if self:GetState('deploy') and (self:GetStateTime()-0.05) > ct and !bool2 then
 				else
-					v_vm = LerpAngle(ft*8,v_vm,(ang-(att.Ang+((self:GetState('reload') and (self:GetStateTime()-0.3) > ct) and self.ReloadViewBobAng or self.DeployViewBobAng)))*0.04)
+					v_vm = LerpAngle(ft*8,v_vm,(ang-(att.Ang+((self:GetState('reload') and (self:GetStateTime()-0.3) > ct) and Angle(0,0,self.ReloadViewBobAng) or Angle(0,0,self.DeployViewBobAng))))*0.04)
 				end
 			end
 		else
