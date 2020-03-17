@@ -377,6 +377,15 @@ local slt = {
 	['SNDLVL_180dB']	= 180
 }
 
+local pitcht = {
+	['PITCH_LOW'] = 95,
+	['PITCH_HIGH'] = 120
+}
+
+local volumet = {
+	['VOL_NORM'] = 1
+}
+
 function QSWEP.AddSoundStr(s)
 	s = vdatatotbl(s)
 
@@ -388,6 +397,8 @@ function QSWEP.AddSoundStr(s)
 		t[n].name = k
 		
 		if v.channel then
+			v.channel = string.upper(v.channel)
+
 			if _G[v.channel] then
 				v.channel = _G[v.channel]
 			end
@@ -396,11 +407,18 @@ function QSWEP.AddSoundStr(s)
 		end
 
 		if v.volume then
+			if volumet[v.volume] then
+				v.volume = volumet[v.volume]
+			end
+
 			v.volume = tonumber(v.volume)
+
 			t[n].volume = v.volume
 		end
 
 		if v.soundlevel then
+			v.soundlevel = string.upper(v.soundlevel)
+
 			if slt[v.soundlevel] then
 				v.soundlevel = slt[v.soundlevel]
 			end
@@ -409,12 +427,25 @@ function QSWEP.AddSoundStr(s)
 		end
 
 		if v.pitch then
-			v.pitch = string.Split(v.pitch,',')
+			if pitcht[v.pitch] then
+				v.pitch = pitcht[v.pitch]
+			end
+
+			if isstring(v.pitch) then
+				v.pitch = string.Split(v.pitch,',')
+
+				if #v.pitch < 2 then
+					v.pitch = unpack(v.pitch)
+				end
+			end
 
 			t[n].pitch = v.pitch
 		end
 
 		if v.wave then
+			v.wave = string.gsub(v.wave,'%)','')
+			v.wave = string.gsub(v.wave,'^','')
+
 			t[n].sound = v.wave
 		elseif v.rndwave then
 			local tbl = {}
@@ -713,6 +744,10 @@ function QSWEP.SafeRemove(e,n)
 end
 
 QSWEP.Remove = QSWEP.SafeRemove
+
+function QSWEP.ScreenScaleH(n)
+	return n * (ScrH()/480)
+end
 
 function table.FullCopy(tab)
 	if !tab then return end

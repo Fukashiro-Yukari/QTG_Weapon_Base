@@ -1,8 +1,8 @@
-function QSWEP.AddConVar(a,b,c)
+function QSWEP.AddConVar(a,b,c,min,max)
 	if c then
-		if !ConVarExists('cl_qswep_'..a) then CreateClientConVar('cl_qswep_'..a,b,true,true) end
+		if !ConVarExists('cl_qswep_'..a) then CreateClientConVar('cl_qswep_'..a,b,true,true,nil,min,max) end
 	else
-		if !ConVarExists('sv_qswep_'..a) then CreateConVar('sv_qswep_'..a,b,CLIENT and {FCVAR_REPLICATED} or {FCVAR_REPLICATED,FCVAR_ARCHIVE,FCVAR_NOTIFY}) end
+		if !ConVarExists('sv_qswep_'..a) then CreateConVar('sv_qswep_'..a,b,CLIENT and {FCVAR_REPLICATED} or {FCVAR_REPLICATED,FCVAR_ARCHIVE,FCVAR_NOTIFY},nil,min,max) end
 	end
 end
 
@@ -70,7 +70,7 @@ QSWEP.AddConVar('blur_deploy',0,true)
 QSWEP.AddConVar('vm_bob',1,true)
 QSWEP.AddConVar('vm_idle',1,true)
 QSWEP.AddConVar('vm_crouch',1,true)
-QSWEP.AddConVar('vm_sway',10,true)
+QSWEP.AddConVar('vm_sway',10,true,0,2)
 QSWEP.AddConVar('view_tilt',0,true)
 QSWEP.AddConVar('insp_darkness',100,true)
 

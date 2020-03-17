@@ -7,9 +7,33 @@ function QSWEP.AddFont(a,b,c,d,e)
 	})
 end
 
-QSWEP.AddFont('QTG_HL2SelectIcons','HALFLIFE2',ScreenScale(40),nil,true)
-QSWEP.AddFont('QTG_CSSelectIcons','csd',ScreenScale(40),nil,true)
-QSWEP.AddFont('QTG_SelectIcons','qtg_wepinfo',ScreenScale(40),nil,true)
+QSWEP.__scanlinesfont = {}
+
+function QSWEP.AddWepFont(n,f,s,b)
+	surface.CreateFont(n,{
+		font = f,
+		size = ScreenScale(s),
+		weight = 0,
+		additive = true
+	})
+
+	surface.CreateFont(n..'2',{
+		font = f,
+		size = ScreenScale(s),
+		scanlines = 4,
+		weight = 0,
+		blursize = QSWEP.ScreenScaleH(5),
+		additive = true,
+		antialias = true
+	})
+
+	QSWEP.__scanlinesfont[n] = true
+end
+
+QSWEP.AddWepFont('QTG_HL2SelectIcons','HALFLIFE2',40)
+QSWEP.AddWepFont('QTG_CSSelectIcons','csd',40)
+QSWEP.AddWepFont('QTG_SelectIcons','qtg_wepinfo',40)
+
 QSWEP.AddFont('QTG_CSKillIcons','csd',ScreenScale(30),nil,true)
 QSWEP.AddFont('QTG_KillIcons','qtg_wepinfo',ScreenScale(30),nil,true)
 QSWEP.AddFont('QTG_TextKillIcons','Roboto Bk',ScreenScale(8),nil,true)

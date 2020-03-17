@@ -123,7 +123,7 @@ end
 local function VMOption(p)
 	p:NumSlider('Gun Bob Intensity','cl_qswep_vm_bob',0,2)
 	p:NumSlider('Gun Idle Intensity','cl_qswep_vm_idle',0,2)
-	p:NumSlider('Gun Sway Intensity','cl_qswep_vm_sway',0,10)
+	p:NumSlider('Gun Sway Intensity','cl_qswep_vm_sway',0,2)
 	p:NumSlider('Gun Tilt strength','cl_qswep_view_tilt',0,2)
 
 	p:CheckBox('Change angle after crouching','cl_qswep_vm_crouch')

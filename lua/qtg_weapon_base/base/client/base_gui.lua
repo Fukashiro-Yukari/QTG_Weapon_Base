@@ -119,7 +119,7 @@ local function start()
                                     editor:Center()
                                 end):SetIcon('icon16/pencil.png')
                             end
-    
+                            
                             menu:AddSpacer()
     
                             menu:AddOption('#spawnmenu.menu.delete',function()

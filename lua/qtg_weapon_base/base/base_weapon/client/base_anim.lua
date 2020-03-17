@@ -22,6 +22,8 @@ local c_oang = Angle()
 local c_dang = Angle()
 
 local c_bump = 0
+local c_bumpzoom = 0
+local c_crouch2 = 0
 local bumpmax = 1500
 
 SWEP.InspectionPos 			= Vector(13.748,-12.551,0.303)
@@ -189,6 +191,7 @@ function SWEP:LuaAnimAttf(pos,ang,ft,iftp)
 	return pos,ang
 end
 
+local crouch = QSWEP.GetConVar('vm_crouch')
 function SWEP:Bump(pos,ang,ft,iftp)
 	if !IsValid(self.Owner) then return pos,ang end
 
@@ -200,15 +203,15 @@ function SWEP:Bump(pos,ang,ft,iftp)
 
 	if iftp then
 		c_bump = Lerp(math.Clamp(ft*8,0,1),c_bump or 0,dist < bumpmax and bumpmax-dist or 0)
+		c_bumpzoom = Lerp(math.Clamp(ft*8,0,1),c_bumpzoom,self:GetState('zoom') and 0 or 1)
+		c_crouch2 = Lerp(math.Clamp(ft*10,0,1),c_crouch2 or 0,self.Owner:Crouching() and self.Owner:OnGround() and self:GetState('idle') and crouch:GetBool() and self:GetFireModeName() != 'Safety' and !self.Inspecting and 0 or 1)
 	end
 
 	if c_bump > 0 then
-		if !self:GetState('zoom') then
-			ang.p = ang.p+-(c_bump*0.010)
-		end
+		ang.p = ang.p+(-(c_bump*0.010))*c_bumpzoom
 
-		if !self.Akimbo and (self.Base == 'qtg_weapon_base' or self.Base == 'qtg_weapon_sniper_base') and !self:GetState('zoom') then
-			ang.y = ang.y+(self.ViewModelFlip and -(c_bump*0.010) or (c_bump*0.010))
+		if !self.Akimbo and (self.Base == 'qtg_weapon_base' or self.Base == 'qtg_weapon_sniper_base') then
+			ang.y = ang.y+(self.ViewModelFlip and -(c_bump*0.010) or (c_bump*0.010))*c_bumpzoom*c_crouch2
 		end
 
 		pos = pos+-(c_bump*0.015)*ang:Forward()
@@ -221,28 +224,42 @@ local sway = QSWEP.GetConVar('vm_sway')
 function SWEP:Sway(pos,ang,ft,iftp)
 	if !IsValid(self.Owner) then return pos,ang end
 	if sway:GetFloat() < 0.01 then return pos,ang end
-
-	self.c_oang = LerpAngle(math.Clamp(ft*10,0,1),self.c_oang or ang,ang)
-	c_oang = LerpAngle(math.Clamp(ft*5,0,1),c_oang,self.c_oang-ang)
-
-	c_oang = c_oang*(sway:GetFloat()*0.1)
-	c_oang.p = math.Clamp(c_oang.p,-45,45)
-	c_oang.y = math.Clamp(c_oang.y,-45,45)
-	c_oang.r = math.Clamp(c_oang.r,-45,45)
 	
-	if self:GetState('zoom') then
-		c_oang = LerpAngle(math.Clamp(ft*60,0,1),c_oang,c_oang/1.8)
+	local angd = self.Owner:EyeAngles()-c_oang
+	
+	if angd.y >= 180 then
+		angd.y = angd.y-360
+	elseif angd.y <= -180 then
+		angd.y = angd.y+360
+	end
+	
+	angd.p = math.Clamp(angd.p,-8,8)
+	angd.y = math.Clamp(angd.y,-8,8)
+	angd.r = math.Clamp(angd.r,-8,8)
+
+	if self:GetState('zoom') or self:GetState('run') then
+		angd = angd*0.05
+	end
+	
+	if iftp then
+		local newang = LerpAngle(math.Clamp(ft*5,0,1),c_dang,angd)
+		c_dang = newang
 	end
 
-	c_dang = self.ViewModelFlip and ang-c_oang or ang+c_oang
-	ang = LerpAngle(math.Clamp(ft/2,0,1),c_dang,c_dang)
+    c_oang = self.Owner:EyeAngles()
 	
-    return pos,ang
+	ang:RotateAroundAxis(ang:Right(),self.ViewModelFlip and c_dang.p*sway:GetFloat() or -c_dang.p*sway:GetFloat())
+	ang:RotateAroundAxis(ang:Up(),self.ViewModelFlip and -c_dang.y*sway:GetFloat() or c_dang.y*sway:GetFloat())
+	ang:RotateAroundAxis(ang:Forward(),self.ViewModelFlip and -c_dang.y*sway:GetFloat() or c_dang.y*sway:GetFloat())
+
+	pos = pos+ang:Right()*(self.ViewModelFlip and -c_dang.y or c_dang.y)*sway:GetFloat()
+	pos = pos+ang:Up()*c_dang.p*sway:GetFloat()
+
+	return pos,ang
 end
 
 local bob = QSWEP.GetConVar('vm_bob')
 local idle = QSWEP.GetConVar('vm_idle')
-local crouch = QSWEP.GetConVar('vm_crouch')
 function SWEP:Movement(pos,ang,ct,ft,iftp)
 	if !IsValid(self.Owner) then return pos,ang end
 	if bob:GetFloat() < 0.01 and idle:GetFloat() < 0.01 then return pos,ang end
@@ -270,11 +287,12 @@ function SWEP:Movement(pos,ang,ct,ft,iftp)
 		c_safety = Lerp(math.Clamp(ft*10,0,1),c_safety or 0,self:GetFireModeName() == 'Safety' and self:GetState('idle') and !self.Inspecting and 1 or 0)
 	end
 
-	pos = pos+1.5*c_jump*ang:Up()
-	pos = pos+-(2*c_jump)*ang:Forward()
-	ang.p = ang.p+(c_jump or 0)*6
-	ang.r = ang.r+(self.ViewModelFlip and -(c_jump or 0) or (c_jump or 0))*10
+	ang.p = ang.p+c_jump*8
+	ang.r = ang.r+(self.ViewModelFlip and -c_jump or c_jump)*18
 	ang.r = ang.r+(self.ViewModelFlip and -(c_look/2) or c_look/2)
+
+	pos = pos+-(2*c_jump)*ang:Forward()
+	pos = pos+2*c_jump*ang:Up()
 
 	local ang2 = Angle(ang)
 
@@ -285,7 +303,7 @@ function SWEP:Movement(pos,ang,ct,ft,iftp)
 	if c_runing > 0 then
 		ang.p = ang.p+-c_runview*c_runing
 
-		pos = pos+-(c_runview*0.31)*c_runing*ang:Forward()
+		pos = pos+-(c_runview*0.25)*c_runing*ang:Forward()
 		pos = pos+-(c_runview*0.1)*c_runing*ang:Up()
 	end
 

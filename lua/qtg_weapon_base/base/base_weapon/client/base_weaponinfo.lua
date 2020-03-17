@@ -12,6 +12,7 @@ SWEP.WeaponInfoType			= 0
 SWEP.WeaponInfoModelCustom	= ''
 SWEP.WeaponInfoModelSize	= 45
 SWEP.WeaponInfoFontCustom	= 'QTG_HL2SelectIcons'
+SWEP.WeaponIconFontScanLines= 'QTG_HL2SelectIcons2'
 SWEP.WeaponInfoFontIcon		= 'd'
 SWEP.WeaponInfoFontColor	= Color(255,210,0)
 SWEP.WeaponInfoPNGCustom	= ''
@@ -46,8 +47,11 @@ local wepinfot = {
 	function(self,x,y,wide,tall,alpha,fsin)
 		if !IsValid(QSWEP.WepModelInfo) then
 			QSWEP.WepModelInfo = ClientsideModel(self.WeaponInfoModelCustom != '' and self.WeaponInfoModelCustom or CheckModel(self.WorldModel),RENDER_GROUP_OPAQUE_ENTITY)
-			QSWEP.WepModelInfo:SetNoDraw(true)
-			QSWEP.WepModelInfo:SetColor(Color(0,0,255))
+
+			if IsValid(QSWEP.WepModelInfo) then
+				QSWEP.WepModelInfo:SetNoDraw(true)
+				QSWEP.WepModelInfo:SetColor(Color(0,0,255))
+			end
 		else
 			QSWEP.WepModelInfo:SetModel(self.WeaponInfoModelCustom != '' and self.WeaponInfoModelCustom or CheckModel(self.WorldModel))
 			QSWEP.WepModelInfo:SetColor(Color(0,0,255))
@@ -81,10 +85,17 @@ local wepinfot = {
 	function(self,x,y,wide,tall,alpha,fsin)
 		local color = self.WeaponInfoFontColor
 		local color2 = Color(color.r,color.g,color.b,math.Rand(10,120))
+		local fx,fy = x+wide/2,self.OldBounceWeaponIcon and y+tall*0.10 or y+tall*0.10-fsin
 
-		draw.SimpleText(self.WeaponInfoFontIcon,self.WeaponInfoFontCustom,x+wide/2,y+tall*0.10,color,TEXT_ALIGN_CENTER)
+		if QSWEP.__scanlinesfont[self.WeaponInfoFontCustom] then
+			draw.SimpleText(self.WeaponInfoFontIcon,self.WeaponInfoFontCustom..'2',fx,fy,color,TEXT_ALIGN_CENTER)
+		elseif self.WeaponIconFontScanLines != 'QTG_HL2SelectIcons2' then
+			draw.SimpleText(self.WeaponInfoFontIcon,self.WeaponIconFontScanLines,fx,fy,color,TEXT_ALIGN_CENTER)
+		end
+
+		draw.SimpleText(self.WeaponInfoFontIcon,self.WeaponInfoFontCustom,fx,fy,color,TEXT_ALIGN_CENTER)
 		
-		if self.BounceWeaponIcon then
+		if self.OldBounceWeaponIcon then
 			draw.SimpleText(self.WeaponInfoFontIcon,self.WeaponInfoFontCustom,x+wide/2+math.Rand(-4,4),y+tall*0.10+math.Rand(-14,14),color2,TEXT_ALIGN_CENTER)
 			draw.SimpleText(self.WeaponInfoFontIcon,self.WeaponInfoFontCustom,x+wide/2+math.Rand(-4,4),y+tall*0.10+math.Rand(-9,9),color2,TEXT_ALIGN_CENTER)
 		end
@@ -118,7 +129,7 @@ function SWEP:DrawWeaponSelection(x,y,wide,tall,alpha)
 	self:PrintWeaponInfo(x+wide+20,y+tall*0.95,alpha-50)
 
 	if !hook.Run('QTG_PreDrawWeaponSelection',self,x,y,wide,tall,alpha,fsin) then
-		local fsin = self.BounceWeaponIcon and math.sin(CurTime()*10)*5 or 0
+		local fsin = self.BounceWeaponIcon and (self.OldBounceWeaponIcon and math.sin(CurTime()*10)*5 or math.sin(CurTime()*5)*10) or 0
 
 		if wepinfot[self.WeaponInfoType] then
 			wepinfot[self.WeaponInfoType](self,x,y,wide,tall,alpha,fsin)
