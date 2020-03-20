@@ -86,7 +86,7 @@ function SWEP:OffSkin(vm)
 end
 
 function SWEP:FireAnimationEvent(pos,ang,event,options)
-	if event == 21 or event == 5001 then
+	if event == 21 or event == 5001 or event == 5011 then
 		return true
 	end
 

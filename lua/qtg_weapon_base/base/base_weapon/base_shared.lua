@@ -1660,6 +1660,7 @@ function SWEP:ShootBullet(a,bl)
 				e:SetStart(b.Src)
 				e:SetEntity(self)
 				e:SetAttachment(self:GetVMRight() and (self.VFireEffectsAtt or 1) or (self.VFireEffectsAtt2 or 2))
+
 				QSWEP.Effect(tracer,e,true,nil)
 			end
 		end
@@ -1681,7 +1682,7 @@ function SWEP:ShootBullet(a,bl)
 
 	if self.Akimbo then
 		b.Tracer = 0
-		b.TracerName = ''
+		b.TracerName = 'qtg_eff_none'
 	else
 		b.Tracer = a.Tracer
 		b.TracerName = a.TracerName == '' and 'qtg_eff_deftracer' or a.TracerName
