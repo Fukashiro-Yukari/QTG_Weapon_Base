@@ -22,7 +22,7 @@ function EFFECT:Init(d)
 		local a = e:GetAttachment(a)
 		if a then
 			if !game.SinglePlayer() then
-				self.StartPos = a.Pos+Vector(0,0,2.5)
+				self.StartPos = a.Pos+Vector(0,0,1)
 			else
 				self.StartPos = a.Pos
 			end

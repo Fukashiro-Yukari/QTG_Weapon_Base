@@ -31,7 +31,7 @@ SWEP.ReloadSilencerAnim				= ACT_VM_RELOAD_SILENCED -- Weapon reload anim too, b
 SWEP.ReloadSound					= 'Weapon_Pistol.Reload' -- Weapon reload sound
 SWEP.ReloadCustomTime				= 2 -- Weapon custom reload time, if weapon allows custom reloading anim
 SWEP.ReloadViewBob					= true -- Allow weapon reload angle swing
-SWEP.ReloadViewBobAng				= Angle(0,0,-90) -- Weapon reload angle
+SWEP.ReloadViewBobAng				= -90 -- Weapon reload angle
 -- SWEP.ReloadPos                      = Vector(0,0,0) -- Weapon custom reload vector, if input representative allows custom reloading
 -- SWEP.ReloadAng                      = Vector(0,0,0) -- Weapon custom reload angle, if input representative allows custom reloading
 
@@ -42,7 +42,7 @@ SWEP.DeploySound					= '' -- Weapon deploy sound
 SWEP.DeployCustom					= false -- Allow custom weapon deploy anim
 SWEP.DeployCustomTime				= 1 -- Custom weapon deploy anim time
 SWEP.DeployViewBob					= true -- Allow weapon deploy angle swing
-SWEP.DeployViewBobAng				= Angle(0,0,-90) -- Weapon deploy angle
+SWEP.DeployViewBobAng				= -90 -- Weapon deploy angle
 
 SWEP.CanHolster						= true -- Allow weapon holster anim
 SWEP.HolsterAnim					= ACT_VM_HOLSTER -- weapon holster anim

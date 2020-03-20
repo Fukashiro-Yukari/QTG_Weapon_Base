@@ -580,6 +580,10 @@ function SWEP:SetWeaponint()
 	if isangle(self.ReloadViewBobAng) then
 		self.ReloadViewBobAng = self.ReloadViewBobAng.r
 	end
+
+	if self.CSMuzzleX then
+		self.VFireEffects = 'CS_MuzzleFlash_X'
+	end
 end
 
 function SWEP:SetNoAmmo()
